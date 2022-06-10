@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["CargoConfigs","A store for Cargo config files discovered from disk."]]});

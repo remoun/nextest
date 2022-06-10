@@ -984,6 +984,21 @@
 <span id="979">979</span>
 <span id="980">980</span>
 <span id="981">981</span>
+<span id="982">982</span>
+<span id="983">983</span>
+<span id="984">984</span>
+<span id="985">985</span>
+<span id="986">986</span>
+<span id="987">987</span>
+<span id="988">988</span>
+<span id="989">989</span>
+<span id="990">990</span>
+<span id="991">991</span>
+<span id="992">992</span>
+<span id="993">993</span>
+<span id="994">994</span>
+<span id="995">995</span>
+<span id="996">996</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
@@ -1372,6 +1387,7 @@
         <span class="ident">rust_build_meta</span>: <span class="kw-2">&amp;</span><span class="ident">RustBuildMeta</span><span class="op">&lt;</span><span class="ident">TestListState</span><span class="op">&gt;</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsString</span>, <span class="ident">CreateTestListError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">dylib_path</span> <span class="op">=</span> <span class="ident">dylib_path</span>();
+        <span class="kw">let</span> <span class="ident">dylib_path_is_empty</span> <span class="op">=</span> <span class="ident">dylib_path</span>.<span class="ident">is_empty</span>();
         <span class="kw">let</span> <span class="ident">new_paths</span> <span class="op">=</span> <span class="ident">rust_build_meta</span>.<span class="ident">dylib_paths</span>();
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">updated_dylib_path</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span> <span class="op">=</span>
@@ -1382,6 +1398,20 @@
                 .<span class="ident">map</span>(<span class="op">|</span><span class="ident">path</span><span class="op">|</span> <span class="ident">path</span>.<span class="ident">clone</span>().<span class="ident">into_std_path_buf</span>()),
         );
         <span class="ident">updated_dylib_path</span>.<span class="ident">extend</span>(<span class="ident">dylib_path</span>);
+
+        <span class="comment">// On macOS, these are the defaults when DYLD_FALLBACK_LIBRARY_PATH isn&#39;t set or set to an</span>
+        <span class="comment">// empty string. (This is relevant if nextest is invoked as its own process and not</span>
+        <span class="comment">// a Cargo subcommand.)</span>
+        <span class="comment">//</span>
+        <span class="comment">// This copies the logic from</span>
+        <span class="comment">// https://cs.github.com/rust-lang/cargo/blob/7d289b171183578d45dcabc56db6db44b9accbff/src/cargo/core/compiler/compilation.rs#L292.</span>
+        <span class="kw">if</span> <span class="macro">cfg!</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;macos&quot;</span>) <span class="op">&amp;&amp;</span> <span class="ident">dylib_path_is_empty</span> {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">home</span>) <span class="op">=</span> <span class="ident">home::home_dir</span>() {
+                <span class="ident">updated_dylib_path</span>.<span class="ident">push</span>(<span class="ident">home</span>.<span class="ident">join</span>(<span class="string">&quot;lib&quot;</span>));
+            }
+            <span class="ident">updated_dylib_path</span>.<span class="ident">push</span>(<span class="string">&quot;/usr/local/lib&quot;</span>.<span class="ident">into</span>());
+            <span class="ident">updated_dylib_path</span>.<span class="ident">push</span>(<span class="string">&quot;/usr/lib&quot;</span>.<span class="ident">into</span>());
+        }
 
         <span class="ident">std::env::join_paths</span>(<span class="ident">updated_dylib_path</span>)
             .<span class="ident">map_err</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">error</span><span class="op">|</span> <span class="ident">CreateTestListError::dylib_join_paths</span>(<span class="ident">new_paths</span>, <span class="ident">error</span>))

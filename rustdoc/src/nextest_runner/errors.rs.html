@@ -670,6 +670,10 @@
 <span id="665">665</span>
 <span id="666">666</span>
 <span id="667">667</span>
+<span id="668">668</span>
+<span id="669">669</span>
+<span id="670">670</span>
+<span id="671">671</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
@@ -1258,6 +1262,55 @@
     },
 }
 
+<span class="doccomment">/// An error occurred while looking for Cargo configuration files.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Error</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">CargoConfigSearchError</span> {
+    <span class="doccomment">/// Failed to retrieve the current directory</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to retrieve current directory&quot;</span>)]</span>
+    <span class="ident">GetCurrentDir</span>(<span class="attribute">#[<span class="ident">source</span>]</span> <span class="ident">std::io::Error</span>),
+
+    <span class="doccomment">/// A non-UTF-8 path was encountered.</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;non-UTF-8 path encountered&quot;</span>)]</span>
+    <span class="ident">NonUtf8Path</span>(<span class="attribute">#[<span class="ident">source</span>]</span> <span class="ident">FromPathBufError</span>),
+
+    <span class="doccomment">/// Failed to retrieve the Cargo home directory.</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to retrieve the Cargo home directory&quot;</span>)]</span>
+    <span class="ident">GetCargoHome</span>(<span class="attribute">#[<span class="ident">source</span>]</span> <span class="ident">std::io::Error</span>),
+
+    <span class="doccomment">/// Failed to canonicalize a path</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to canonicalize path `{path}&quot;</span>)]</span>
+    <span class="ident">FailedPathCanonicalization</span> {
+        <span class="doccomment">/// The path that failed to canonicalize</span>
+        <span class="ident">path</span>: <span class="ident">Utf8PathBuf</span>,
+
+        <span class="doccomment">/// The error the occurred during canonicalization</span>
+        <span class="attribute">#[<span class="ident">source</span>]</span>
+        <span class="ident">error</span>: <span class="ident">std::io::Error</span>,
+    },
+
+    <span class="doccomment">/// Failed to read config file</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to read config at `{path}`&quot;</span>)]</span>
+    <span class="ident">ConfigReadError</span> {
+        <span class="doccomment">/// The path of the config file</span>
+        <span class="ident">path</span>: <span class="ident">Utf8PathBuf</span>,
+
+        <span class="doccomment">/// The error that occurred trying to read the config file</span>
+        <span class="attribute">#[<span class="ident">source</span>]</span>
+        <span class="ident">error</span>: <span class="ident">std::io::Error</span>,
+    },
+
+    <span class="doccomment">/// Failed to deserialize config file</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to parse config at `{path}`&quot;</span>)]</span>
+    <span class="ident">ConfigParseError</span> {
+        <span class="doccomment">/// The path of the config file</span>
+        <span class="ident">path</span>: <span class="ident">Utf8PathBuf</span>,
+
+        <span class="doccomment">/// The error that occurred trying to deserialize the config file</span>
+        <span class="attribute">#[<span class="ident">source</span>]</span>
+        <span class="ident">error</span>: <span class="ident">toml::de::Error</span>,
+    },
+}
+
 <span class="doccomment">/// An error occurred determining the target runner</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Error</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">TargetRunnerError</span> {
@@ -1279,51 +1332,6 @@
 
         <span class="doccomment">/// The value that was read from the key</span>
         <span class="ident">value</span>: <span class="ident">String</span>,
-    },
-
-    <span class="doccomment">/// Failed to retrieve the current directory</span>
-    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to retrieve current directory&quot;</span>)]</span>
-    <span class="ident">GetCurrentDir</span>(<span class="attribute">#[<span class="ident">source</span>]</span> <span class="ident">std::io::Error</span>),
-
-    <span class="doccomment">/// Failed to retrieve the Cargo home directory.</span>
-    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to retrieve the Cargo home directory&quot;</span>)]</span>
-    <span class="ident">GetCargoHome</span>(<span class="attribute">#[<span class="ident">source</span>]</span> <span class="ident">std::io::Error</span>),
-
-    <span class="doccomment">/// Failed to canonicalize a path</span>
-    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to canonicalize path `{path}&quot;</span>)]</span>
-    <span class="ident">FailedPathCanonicalization</span> {
-        <span class="doccomment">/// The path that failed to canonicalize</span>
-        <span class="ident">path</span>: <span class="ident">Utf8PathBuf</span>,
-
-        <span class="doccomment">/// The error the occurred during canonicalization</span>
-        <span class="attribute">#[<span class="ident">source</span>]</span>
-        <span class="ident">error</span>: <span class="ident">std::io::Error</span>,
-    },
-
-    <span class="doccomment">/// A non-UTF-8 path was encountered.</span>
-    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;non-UTF-8 path encountered&quot;</span>)]</span>
-    <span class="ident">NonUtf8Path</span>(<span class="attribute">#[<span class="ident">source</span>]</span> <span class="ident">FromPathBufError</span>),
-
-    <span class="doccomment">/// Failed to read config file</span>
-    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to read config at `{path}`&quot;</span>)]</span>
-    <span class="ident">FailedToReadConfig</span> {
-        <span class="doccomment">/// The path of the config file</span>
-        <span class="ident">path</span>: <span class="ident">Utf8PathBuf</span>,
-
-        <span class="doccomment">/// The error that occurred trying to read the config file</span>
-        <span class="attribute">#[<span class="ident">source</span>]</span>
-        <span class="ident">error</span>: <span class="ident">std::io::Error</span>,
-    },
-
-    <span class="doccomment">/// Failed to deserialize config file</span>
-    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to parse config at `{path}`&quot;</span>)]</span>
-    <span class="ident">FailedToParseConfig</span> {
-        <span class="doccomment">/// The path of the config file</span>
-        <span class="ident">path</span>: <span class="ident">Utf8PathBuf</span>,
-
-        <span class="doccomment">/// The error that occurred trying to deserialize the config file</span>
-        <span class="attribute">#[<span class="ident">source</span>]</span>
-        <span class="ident">error</span>: <span class="ident">toml::de::Error</span>,
     },
 
     <span class="doccomment">/// Failed to parse the specified target triple</span>

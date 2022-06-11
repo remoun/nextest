@@ -474,7 +474,7 @@
 <span class="doccomment">//! Support for [target runners](https://doc.rust-lang.org/cargo/reference/config.html#targettriplerunner)</span>
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
-    <span class="ident">cargo_config</span>::{<span class="ident">CargoConfigs</span>, <span class="ident">Runner</span>},
+    <span class="ident">cargo_config</span>::{<span class="ident">CargoConfigs</span>, <span class="ident">Runner</span>, <span class="ident">TargetTriple</span>},
     <span class="ident">errors::TargetRunnerError</span>,
 };
 <span class="kw">use</span> <span class="ident">camino::Utf8PathBuf</span>;
@@ -484,7 +484,7 @@
 
 <span class="doccomment">/// A [target runner](https://doc.rust-lang.org/cargo/reference/config.html#targettriplerunner)</span>
 <span class="doccomment">/// used to execute a test binary rather than the default of executing natively.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TargetRunner</span> {
     <span class="ident">host</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PlatformRunner</span><span class="op">&gt;</span>,
     <span class="ident">target</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PlatformRunner</span><span class="op">&gt;</span>,
@@ -496,7 +496,7 @@
     <span class="doccomment">/// or via a `CARGO_TARGET_{TRIPLE}_RUNNER` environment variable</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(
         <span class="ident">configs</span>: <span class="kw-2">&amp;</span><span class="ident">CargoConfigs</span>,
-        <span class="ident">target_triple</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span>,
+        <span class="ident">target_triple</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">TargetTriple</span><span class="op">&gt;</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">TargetRunnerError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">host</span> <span class="op">=</span> <span class="ident">PlatformRunner::by_precedence</span>(<span class="ident">configs</span>, <span class="prelude-val">None</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">target</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">target_triple</span>.<span class="ident">is_some</span>() {
@@ -560,13 +560,13 @@
 <span class="kw">impl</span> <span class="ident">PlatformRunner</span> {
     <span class="kw">fn</span> <span class="ident">by_precedence</span>(
         <span class="ident">configs</span>: <span class="kw-2">&amp;</span><span class="ident">CargoConfigs</span>,
-        <span class="ident">target_triple</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span>,
+        <span class="ident">triple</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">TargetTriple</span><span class="op">&gt;</span>,
     ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">TargetRunnerError</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">target</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">target_triple</span> {
+        <span class="kw">let</span> <span class="ident">target</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">triple</span> {
             <span class="prelude-val">Some</span>(<span class="ident">target</span>) =&gt; <span class="ident">Platform::from_triple</span>(
-                <span class="ident">target_spec::Triple::new</span>(<span class="ident">target</span>.<span class="ident">to_owned</span>()).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">error</span><span class="op">|</span> {
+                <span class="ident">target_spec::Triple::new</span>(<span class="ident">target</span>.<span class="ident">triple</span>.<span class="ident">to_owned</span>()).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">error</span><span class="op">|</span> {
                     <span class="ident">TargetRunnerError::FailedToParseTargetTriple</span> {
-                        <span class="ident">triple</span>: <span class="ident">target</span>.<span class="ident">to_owned</span>(),
+                        <span class="ident">triple</span>: <span class="ident">target</span>.<span class="ident">triple</span>.<span class="ident">to_owned</span>(),
                         <span class="ident">error</span>,
                     }
                 })<span class="question-mark">?</span>,
@@ -617,7 +617,7 @@
         <span class="comment">// a runner that matches our target triple, we need to actually find</span>
         <span class="comment">// all the matches, but in reverse order as the closer the config is</span>
         <span class="comment">// to our current working directory, the higher precedence it has</span>
-        <span class="lifetime">&#39;config</span>: <span class="kw">for</span> (<span class="ident">path</span>, <span class="ident">config</span>) <span class="kw">in</span> <span class="ident">configs</span>.<span class="ident">discovered_configs</span>().<span class="ident">into_iter</span>().<span class="ident">rev</span>() {
+        <span class="lifetime">&#39;config</span>: <span class="kw">for</span> (<span class="ident">path</span>, <span class="ident">config</span>) <span class="kw">in</span> <span class="ident">configs</span>.<span class="ident">discovered_configs</span>()<span class="question-mark">?</span>.<span class="ident">into_iter</span>().<span class="ident">rev</span>() {
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">targets</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">config</span>.<span class="ident">target</span> {
                 <span class="comment">// First lookup by the exact triple, as that one always takes precedence</span>
                 <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">parent</span>) <span class="op">=</span> <span class="ident">targets</span>.<span class="ident">get</span>(<span class="ident">target</span>.<span class="ident">triple_str</span>()) {
@@ -913,7 +913,7 @@
         <span class="ident">terminate_search_at</span>: <span class="kw-2">&amp;</span><span class="ident">Utf8Path</span>,
     ) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PlatformRunner</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">configs</span> <span class="op">=</span>
-            <span class="ident">CargoConfigs::discover_with_isolation</span>(<span class="ident">start_search_at</span>, <span class="ident">terminate_search_at</span>).<span class="ident">unwrap</span>();
+            <span class="ident">CargoConfigs::new_with_isolation</span>(<span class="ident">start_search_at</span>, <span class="ident">terminate_search_at</span>).<span class="ident">unwrap</span>();
         <span class="ident">PlatformRunner::find_config</span>(<span class="kw-2">&amp;</span><span class="ident">configs</span>, <span class="ident">platform</span>).<span class="ident">unwrap</span>()
     }
 

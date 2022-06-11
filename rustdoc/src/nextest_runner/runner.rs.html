@@ -1052,6 +1052,32 @@
 <span id="1047">1047</span>
 <span id="1048">1048</span>
 <span id="1049">1049</span>
+<span id="1050">1050</span>
+<span id="1051">1051</span>
+<span id="1052">1052</span>
+<span id="1053">1053</span>
+<span id="1054">1054</span>
+<span id="1055">1055</span>
+<span id="1056">1056</span>
+<span id="1057">1057</span>
+<span id="1058">1058</span>
+<span id="1059">1059</span>
+<span id="1060">1060</span>
+<span id="1061">1061</span>
+<span id="1062">1062</span>
+<span id="1063">1063</span>
+<span id="1064">1064</span>
+<span id="1065">1065</span>
+<span id="1066">1066</span>
+<span id="1067">1067</span>
+<span id="1068">1068</span>
+<span id="1069">1069</span>
+<span id="1070">1070</span>
+<span id="1071">1071</span>
+<span id="1072">1072</span>
+<span id="1073">1073</span>
+<span id="1074">1074</span>
+<span id="1075">1075</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
@@ -1062,7 +1088,7 @@
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">config::NextestProfile</span>,
     <span class="ident">list</span>::{<span class="ident">TestInstance</span>, <span class="ident">TestList</span>},
-    <span class="ident">reporter</span>::{<span class="ident">CancelReason</span>, <span class="ident">StatusLevel</span>, <span class="ident">TestEvent</span>},
+    <span class="ident">reporter</span>::{<span class="ident">CancelReason</span>, <span class="ident">FinalStatusLevel</span>, <span class="ident">StatusLevel</span>, <span class="ident">TestEvent</span>},
     <span class="ident">signal</span>::{<span class="ident">SignalEvent</span>, <span class="ident">SignalHandler</span>},
     <span class="ident">stopwatch</span>::{<span class="ident">StopwatchEnd</span>, <span class="ident">StopwatchStart</span>},
     <span class="ident">target_runner::TargetRunner</span>,
@@ -1386,6 +1412,7 @@
                 <span class="ident">stderr</span>: <span class="macro">vec!</span>[],
                 <span class="ident">result</span>: <span class="ident">ExecutionResult::ExecFail</span>,
                 <span class="ident">stopwatch_end</span>: <span class="ident">stopwatch</span>.<span class="ident">end</span>(),
+                <span class="ident">is_slow</span>: <span class="bool-val">false</span>,
             },
         }
     }
@@ -1413,6 +1440,7 @@
         <span class="kw">let</span> <span class="ident">handle</span> <span class="op">=</span> <span class="ident">cmd</span>.<span class="ident">start</span>()<span class="question-mark">?</span>;
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">status</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ExecutionResult</span><span class="op">&gt;</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">is_slow</span> <span class="op">=</span> <span class="bool-val">false</span>;
 
         <span class="self">self</span>.<span class="ident">wait_pool</span>.<span class="ident">in_place_scope</span>(<span class="op">|</span><span class="ident">s</span><span class="op">|</span> {
             <span class="kw">let</span> (<span class="ident">sender</span>, <span class="ident">receiver</span>) <span class="op">=</span> <span class="ident">crossbeam_channel::bounded</span>::<span class="op">&lt;</span>()<span class="op">&gt;</span>(<span class="number">1</span>);
@@ -1433,15 +1461,18 @@
             <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">error</span>) <span class="op">=</span> <span class="ident">receiver</span>.<span class="ident">recv_timeout</span>(<span class="self">self</span>.<span class="ident">slow_timeout</span>.<span class="ident">period</span>) {
                 <span class="kw">match</span> <span class="ident">error</span> {
                     <span class="ident">RecvTimeoutError::Timeout</span> =&gt; {
+                        <span class="ident">is_slow</span> <span class="op">=</span> <span class="bool-val">true</span>;
+                        <span class="ident">timeout_hit</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
+
                         <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">run_sender</span>.<span class="ident">send</span>(<span class="ident">InternalTestEvent::Slow</span> {
                             <span class="ident">test_instance</span>: <span class="ident">test</span>,
-                            <span class="ident">elapsed</span>: <span class="ident">stopwatch</span>.<span class="ident">elapsed</span>(),
+                            <span class="comment">// Pass in the slow timeout period times timeout_hit, since stopwatch.elapsed() tends to be</span>
+                            <span class="comment">// slightly longer.</span>
+                            <span class="ident">elapsed</span>: <span class="ident">timeout_hit</span> <span class="op">*</span> <span class="self">self</span>.<span class="ident">slow_timeout</span>.<span class="ident">period</span>,
                         });
 
                         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">terminate_after</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">slow_timeout</span>.<span class="ident">terminate_after</span> {
-                            <span class="ident">timeout_hit</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
-
-                            <span class="kw">if</span> <span class="ident">NonZeroUsize::new</span>(<span class="ident">timeout_hit</span>)
+                            <span class="kw">if</span> <span class="ident">NonZeroUsize::new</span>(<span class="ident">timeout_hit</span> <span class="kw">as</span> <span class="ident">usize</span>)
                                 .<span class="ident">expect</span>(<span class="string">&quot;timeout_hit cannot be non-zero&quot;</span>)
                                 <span class="op">&gt;</span><span class="op">=</span> <span class="ident">terminate_after</span>
                             {
@@ -1508,6 +1539,7 @@
             <span class="ident">stderr</span>: <span class="ident">output</span>.<span class="ident">stderr</span>,
             <span class="ident">result</span>: <span class="ident">status</span>,
             <span class="ident">stopwatch_end</span>: <span class="ident">stopwatch</span>.<span class="ident">end</span>(),
+            <span class="ident">is_slow</span>,
         })
     }
 }
@@ -1609,13 +1641,29 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">ExecutionDescription</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="doccomment">/// Returns the status level for this `RunDescribe`.</span>
+    <span class="doccomment">/// Returns the status level for this `ExecutionDescription`.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">status_level</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">StatusLevel</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">ExecutionDescription::Success</span> { .. } =&gt; <span class="ident">StatusLevel::Pass</span>,
             <span class="comment">// A flaky test implies that we print out retry information for it.</span>
             <span class="ident">ExecutionDescription::Flaky</span> { .. } =&gt; <span class="ident">StatusLevel::Retry</span>,
             <span class="ident">ExecutionDescription::Failure</span> { .. } =&gt; <span class="ident">StatusLevel::Fail</span>,
+        }
+    }
+
+    <span class="doccomment">/// Returns the final status level for this `ExecutionDescription`.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">final_status_level</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">FinalStatusLevel</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">ExecutionDescription::Success</span> { <span class="ident">single_status</span>, .. } =&gt; {
+                <span class="kw">if</span> <span class="ident">single_status</span>.<span class="ident">is_slow</span> {
+                    <span class="ident">FinalStatusLevel::Slow</span>
+                } <span class="kw">else</span> {
+                    <span class="ident">FinalStatusLevel::Pass</span>
+                }
+            }
+            <span class="comment">// A flaky test implies that we print out retry information for it.</span>
+            <span class="ident">ExecutionDescription::Flaky</span> { .. } =&gt; <span class="ident">FinalStatusLevel::Flaky</span>,
+            <span class="ident">ExecutionDescription::Failure</span> { .. } =&gt; <span class="ident">FinalStatusLevel::Fail</span>,
         }
     }
 
@@ -1646,6 +1694,8 @@
     <span class="kw">pub</span> <span class="ident">start_time</span>: <span class="ident">SystemTime</span>,
     <span class="doccomment">/// The time it took for the test to run.</span>
     <span class="kw">pub</span> <span class="ident">time_taken</span>: <span class="ident">Duration</span>,
+    <span class="doccomment">/// Whether this test counts as slow.</span>
+    <span class="kw">pub</span> <span class="ident">is_slow</span>: <span class="ident">bool</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">ExecuteStatus</span> {
@@ -1665,6 +1715,7 @@
     <span class="ident">stderr</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
     <span class="ident">result</span>: <span class="ident">ExecutionResult</span>,
     <span class="ident">stopwatch_end</span>: <span class="ident">StopwatchEnd</span>,
+    <span class="ident">is_slow</span>: <span class="ident">bool</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">InternalExecuteStatus</span> {
@@ -1676,6 +1727,7 @@
             <span class="ident">result</span>: <span class="self">self</span>.<span class="ident">result</span>,
             <span class="ident">start_time</span>: <span class="self">self</span>.<span class="ident">stopwatch_end</span>.<span class="ident">start_time</span>,
             <span class="ident">time_taken</span>: <span class="self">self</span>.<span class="ident">stopwatch_end</span>.<span class="ident">duration</span>,
+            <span class="ident">is_slow</span>: <span class="self">self</span>.<span class="ident">is_slow</span>,
         }
     }
 }

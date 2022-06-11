@@ -552,7 +552,7 @@
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">errors</span>::{<span class="ident">ConfigParseError</span>, <span class="ident">ProfileNotFound</span>},
-    <span class="ident">reporter</span>::{<span class="ident">StatusLevel</span>, <span class="ident">TestOutputDisplay</span>},
+    <span class="ident">reporter</span>::{<span class="ident">FinalStatusLevel</span>, <span class="ident">StatusLevel</span>, <span class="ident">TestOutputDisplay</span>},
 };
 <span class="kw">use</span> <span class="ident">camino</span>::{<span class="ident">Utf8Path</span>, <span class="ident">Utf8PathBuf</span>};
 <span class="kw">use</span> <span class="ident">config</span>::{<span class="ident">builder::DefaultState</span>, <span class="ident">Config</span>, <span class="ident">ConfigBuilder</span>, <span class="ident">File</span>, <span class="ident">FileFormat</span>};
@@ -721,7 +721,7 @@
     }
 
     <span class="doccomment">/// Returns the test status level at the end of the run.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">final_status_level</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">StatusLevel</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">final_status_level</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">FinalStatusLevel</span> {
         <span class="self">self</span>.<span class="ident">custom_profile</span>
             .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">profile</span><span class="op">|</span> <span class="ident">profile</span>.<span class="ident">final_status_level</span>)
             .<span class="ident">unwrap_or</span>(<span class="self">self</span>.<span class="ident">default_profile</span>.<span class="ident">final_status_level</span>)
@@ -834,7 +834,7 @@
 <span class="kw">struct</span> <span class="ident">DefaultProfileImpl</span> {
     <span class="ident">retries</span>: <span class="ident">usize</span>,
     <span class="ident">status_level</span>: <span class="ident">StatusLevel</span>,
-    <span class="ident">final_status_level</span>: <span class="ident">StatusLevel</span>,
+    <span class="ident">final_status_level</span>: <span class="ident">FinalStatusLevel</span>,
     <span class="ident">failure_output</span>: <span class="ident">TestOutputDisplay</span>,
     <span class="ident">success_output</span>: <span class="ident">TestOutputDisplay</span>,
     <span class="ident">fail_fast</span>: <span class="ident">bool</span>,
@@ -923,7 +923,7 @@
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
     <span class="ident">status_level</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">StatusLevel</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
-    <span class="ident">final_status_level</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">StatusLevel</span><span class="op">&gt;</span>,
+    <span class="ident">final_status_level</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">FinalStatusLevel</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>
     <span class="ident">failure_output</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">TestOutputDisplay</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">default</span>)]</span>

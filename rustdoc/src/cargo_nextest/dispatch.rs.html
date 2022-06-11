@@ -1149,6 +1149,36 @@
 <span id="1144">1144</span>
 <span id="1145">1145</span>
 <span id="1146">1146</span>
+<span id="1147">1147</span>
+<span id="1148">1148</span>
+<span id="1149">1149</span>
+<span id="1150">1150</span>
+<span id="1151">1151</span>
+<span id="1152">1152</span>
+<span id="1153">1153</span>
+<span id="1154">1154</span>
+<span id="1155">1155</span>
+<span id="1156">1156</span>
+<span id="1157">1157</span>
+<span id="1158">1158</span>
+<span id="1159">1159</span>
+<span id="1160">1160</span>
+<span id="1161">1161</span>
+<span id="1162">1162</span>
+<span id="1163">1163</span>
+<span id="1164">1164</span>
+<span id="1165">1165</span>
+<span id="1166">1166</span>
+<span id="1167">1167</span>
+<span id="1168">1168</span>
+<span id="1169">1169</span>
+<span id="1170">1170</span>
+<span id="1171">1171</span>
+<span id="1172">1172</span>
+<span id="1173">1173</span>
+<span id="1174">1174</span>
+<span id="1175">1175</span>
+<span id="1176">1176</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
@@ -1170,7 +1200,7 @@
     <span class="ident">config</span>::{<span class="ident">NextestConfig</span>, <span class="ident">NextestProfile</span>},
     <span class="ident">list</span>::{<span class="ident">BinaryList</span>, <span class="ident">OutputFormat</span>, <span class="ident">RustTestArtifact</span>, <span class="ident">SerializableFormat</span>, <span class="ident">TestList</span>},
     <span class="ident">partition::PartitionerBuilder</span>,
-    <span class="ident">reporter</span>::{<span class="ident">StatusLevel</span>, <span class="ident">TestOutputDisplay</span>, <span class="ident">TestReporterBuilder</span>},
+    <span class="ident">reporter</span>::{<span class="ident">FinalStatusLevel</span>, <span class="ident">StatusLevel</span>, <span class="ident">TestOutputDisplay</span>, <span class="ident">TestReporterBuilder</span>},
     <span class="ident">reuse_build</span>::{<span class="ident">archive_to_file</span>, <span class="ident">ArchiveReporter</span>, <span class="ident">MetadataOrPath</span>, <span class="ident">PathMapper</span>, <span class="ident">ReuseBuildInfo</span>},
     <span class="ident">runner::TestRunnerBuilder</span>,
     <span class="ident">signal::SignalHandler</span>,
@@ -1657,8 +1687,8 @@
         <span class="ident">env</span> <span class="op">=</span> <span class="string">&quot;NEXTEST_FAILURE_OUTPUT&quot;</span>,
     )]</span>
     <span class="ident">failure_output</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">TestOutputDisplay</span><span class="op">&gt;</span>,
-    <span class="doccomment">/// Output stdout and stderr on success</span>
 
+    <span class="doccomment">/// Output stdout and stderr on success</span>
     <span class="attribute">#[<span class="ident">clap</span>(
         <span class="ident">long</span>,
         <span class="ident">possible_values</span> <span class="op">=</span> <span class="ident">TestOutputDisplay::variants</span>(),
@@ -1681,11 +1711,11 @@
     <span class="doccomment">/// Test statuses to output at the end of the run.</span>
     <span class="attribute">#[<span class="ident">clap</span>(
         <span class="ident">long</span>,
-        <span class="ident">possible_values</span> <span class="op">=</span> <span class="ident">StatusLevel::variants</span>(),
+        <span class="ident">arg_enum</span>,
         <span class="ident">value_name</span> <span class="op">=</span> <span class="string">&quot;LEVEL&quot;</span>,
-        <span class="ident">env</span> <span class="op">=</span> <span class="string">&quot;NEXTEST_FINAL_STATUS_LEVEL&quot;</span>,
+        <span class="ident">env</span> <span class="op">=</span> <span class="string">&quot;NEXTEST_FINAL_STATUS_LEVEL&quot;</span>
     )]</span>
-    <span class="ident">final_status_level</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">StatusLevel</span><span class="op">&gt;</span>,
+    <span class="ident">final_status_level</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">FinalStatusLevelOpt</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">TestReporterOpts</span> {
@@ -1702,9 +1732,36 @@
             <span class="ident">builder</span>.<span class="ident">set_status_level</span>(<span class="ident">status_level</span>);
         }
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">final_status_level</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">final_status_level</span> {
-            <span class="ident">builder</span>.<span class="ident">set_final_status_level</span>(<span class="ident">final_status_level</span>);
+            <span class="ident">builder</span>.<span class="ident">set_final_status_level</span>(<span class="ident">final_status_level</span>.<span class="ident">into_final_status_level</span>());
         }
         <span class="ident">builder</span>
+    }
+}
+
+<span class="doccomment">/// This is copied from `FinalStatusLevel` except it also has a retry option.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Debug</span>, <span class="ident">ArgEnum</span>)]</span>
+<span class="kw">enum</span> <span class="ident">FinalStatusLevelOpt</span> {
+    <span class="prelude-val">None</span>,
+    <span class="ident">Fail</span>,
+    <span class="attribute">#[<span class="ident">clap</span>(<span class="ident">alias</span> <span class="op">=</span> <span class="string">&quot;retry&quot;</span>)]</span>
+    <span class="ident">Flaky</span>,
+    <span class="ident">Slow</span>,
+    <span class="ident">Skip</span>,
+    <span class="ident">Pass</span>,
+    <span class="ident">All</span>,
+}
+
+<span class="kw">impl</span> <span class="ident">FinalStatusLevelOpt</span> {
+    <span class="kw">fn</span> <span class="ident">into_final_status_level</span>(<span class="self">self</span>) -&gt; <span class="ident">FinalStatusLevel</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident"><span class="self">Self</span>::None</span> =&gt; <span class="ident">FinalStatusLevel::None</span>,
+            <span class="ident"><span class="self">Self</span>::Fail</span> =&gt; <span class="ident">FinalStatusLevel::Fail</span>,
+            <span class="ident"><span class="self">Self</span>::Flaky</span> =&gt; <span class="ident">FinalStatusLevel::Flaky</span>,
+            <span class="ident"><span class="self">Self</span>::Slow</span> =&gt; <span class="ident">FinalStatusLevel::Slow</span>,
+            <span class="ident"><span class="self">Self</span>::Skip</span> =&gt; <span class="ident">FinalStatusLevel::Skip</span>,
+            <span class="ident"><span class="self">Self</span>::Pass</span> =&gt; <span class="ident">FinalStatusLevel::Pass</span>,
+            <span class="ident"><span class="self">Self</span>::All</span> =&gt; <span class="ident">FinalStatusLevel::All</span>,
+        }
     }
 }
 
@@ -2145,6 +2202,9 @@
             <span class="string">&quot;cargo nextest run --status-level=all&quot;</span>,
             <span class="string">&quot;cargo nextest run --no-capture&quot;</span>,
             <span class="string">&quot;cargo nextest run --nocapture&quot;</span>,
+            <span class="string">&quot;cargo nextest run --final-status-level flaky&quot;</span>,
+            <span class="comment">// retry is an alias for flaky -- ensure that it parses</span>
+            <span class="string">&quot;cargo nextest run --final-status-level retry&quot;</span>,
             <span class="comment">// ---</span>
             <span class="comment">// Cargo options</span>
             <span class="comment">// ---</span>

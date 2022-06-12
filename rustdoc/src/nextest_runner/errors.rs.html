@@ -1738,7 +1738,7 @@
         <span class="kw">let</span> <span class="ident">display_versions</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">versions</span>
             .<span class="ident">iter</span>()
             .<span class="ident">filter_map</span>(<span class="op">|</span>(<span class="ident">v</span>, <span class="ident">status</span>)<span class="op">|</span> {
-                (<span class="op">!</span><span class="ident">v</span>.<span class="ident">pre</span>.<span class="ident">is_empty</span>() <span class="op">&amp;&amp;</span> <span class="kw-2">*</span><span class="ident">status</span> <span class="op">==</span> <span class="ident">ReleaseStatus::Active</span>).<span class="ident">then</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">v</span>.<span class="ident">to_string</span>())
+                (<span class="ident">v</span>.<span class="ident">pre</span>.<span class="ident">is_empty</span>() <span class="op">&amp;&amp;</span> <span class="kw-2">*</span><span class="ident">status</span> <span class="op">==</span> <span class="ident">ReleaseStatus::Active</span>).<span class="ident">then</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">v</span>.<span class="ident">to_string</span>())
             })
             .<span class="ident">take</span>(<span class="ident">DISPLAY_COUNT</span>)
             .<span class="ident">collect</span>();

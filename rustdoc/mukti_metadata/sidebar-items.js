@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["ReleaseStatus",""],["VersionRange","Represents a range of versions"],["VersionRangeKind",""]],"struct":[["MuktiProject",""],["MuktiReleasesJson",""],["ReleaseLocation",""],["ReleaseRangeData",""],["ReleaseVersionData",""],["VersionRangeParseError",""]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["CheckStatus","The result of [`NextestReleases::check`]."],["UpdateVersion","Represents the version this project is being updated to."]],"struct":[["MuktiBackend","Update backend using mukti"],["MuktiUpdateContext","Context for an update."],["NextestReleases","Release info for nextest."]]});

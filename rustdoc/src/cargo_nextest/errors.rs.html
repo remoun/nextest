@@ -426,7 +426,6 @@
 <span id="421">421</span>
 <span id="422">422</span>
 <span id="423">423</span>
-<span id="424">424</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
@@ -799,9 +798,8 @@
             }
             <span class="ident"><span class="self">Self</span>::TestBinaryArgsParseError</span> { <span class="ident">reason</span>, <span class="ident">args</span> } =&gt; {
                 <span class="macro">log::error!</span>(
-                    <span class="string">&quot;failed to parse test binary arguments `{}` due to {}&quot;</span>,
+                    <span class="string">&quot;failed to parse test binary arguments `{}`: arguments are {reason}&quot;</span>,
                     <span class="ident">args</span>.<span class="ident">join</span>(<span class="string">&quot;, &quot;</span>),
-                    <span class="ident">reason</span>
                 );
                 <span class="prelude-val">None</span>
             }

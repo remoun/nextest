@@ -23,4 +23,5 @@ https://nexte.st/book/running
 https://nexte.st/book/stability
 https://nexte.st/book/target-runners
 https://nexte.st/book/test-coverage
+https://nexte.st/book/updating
 https://nexte.st/book/usage

@@ -779,7 +779,7 @@
             }
             <span class="ident"><span class="self">Self</span>::ExperimentalFeatureNotEnabled</span> { <span class="ident">name</span>, <span class="ident">var_name</span> } =&gt; {
                 <span class="macro">log::error!</span>(
-                    <span class="string">&quot;&#39;{}&#39; is an experimental feature and must be enabled with {}=1&quot;</span>,
+                    <span class="string">&quot;{} is an experimental feature and must be enabled with {}=1&quot;</span>,
                     <span class="ident">name</span>,
                     <span class="ident">var_name</span>
                 );
@@ -799,8 +799,8 @@
             }
             <span class="ident"><span class="self">Self</span>::TestBinaryArgsParseError</span> { <span class="ident">reason</span>, <span class="ident">args</span> } =&gt; {
                 <span class="macro">log::error!</span>(
-                    <span class="string">&quot;failed to parse test binary arguments {:?} due to {}&quot;</span>,
-                    <span class="ident">args</span>,
+                    <span class="string">&quot;failed to parse test binary arguments `{}` due to {}&quot;</span>,
+                    <span class="ident">args</span>.<span class="ident">join</span>(<span class="string">&quot;, &quot;</span>),
                     <span class="ident">reason</span>
                 );
                 <span class="prelude-val">None</span>

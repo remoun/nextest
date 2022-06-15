@@ -132,6 +132,7 @@
 <span id="127">127</span>
 <span id="128">128</span>
 <span id="129">129</span>
+<span id="130">130</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
@@ -219,7 +220,8 @@
     <span class="doccomment">/// These paths are prepended to the dynamic library environment variable for the current</span>
     <span class="doccomment">/// platform (e.g. `LD_LIBRARY_PATH` on non-Apple Unix platforms).</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">dylib_paths</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Utf8PathBuf</span><span class="op">&gt;</span> {
-        <span class="comment">// TODO: rustc sysroot library path? is this even possible to get?</span>
+        <span class="comment">// FIXME/HELP WANTED: get the rustc sysroot library path here.</span>
+        <span class="comment">// See https://github.com/nextest-rs/nextest/issues/267.</span>
 
         <span class="comment">// Cargo puts linked paths before base output directories.</span>
         <span class="self">self</span>.<span class="ident">linked_paths</span>

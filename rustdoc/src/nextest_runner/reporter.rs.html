@@ -1296,11 +1296,6 @@
 <span id="1291">1291</span>
 <span id="1292">1292</span>
 <span id="1293">1293</span>
-<span id="1294">1294</span>
-<span id="1295">1295</span>
-<span id="1296">1296</span>
-<span id="1297">1297</span>
-<span id="1298">1298</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
@@ -1615,19 +1610,14 @@
                 <span class="kw">let</span> <span class="ident">progress_bar</span> <span class="op">=</span> <span class="ident">ProgressBar::new</span>(<span class="ident">test_list</span>.<span class="ident">test_count</span>() <span class="kw">as</span> <span class="ident">u64</span>);
                 <span class="comment">// Emulate Cargo&#39;s style.</span>
                 <span class="kw">let</span> <span class="ident">test_count_width</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">test_list</span>.<span class="ident">test_count</span>()).<span class="ident">len</span>();
-                <span class="comment">// Make the bar take the same width as the binary ID, which requires reducing its length</span>
-                <span class="comment">// by 2 to compensate for the surrounding [].</span>
-                <span class="comment">// Also set a floor for the width to ensure that the bar isn&#39;t too small. 27 is the</span>
-                <span class="comment">// width of the bar Cargo produces; match that.</span>
-                <span class="kw">let</span> <span class="ident">bar_width</span> <span class="op">=</span> <span class="ident">binary_id_width</span>.<span class="ident">max</span>(<span class="number">27</span>) <span class="op">-</span> <span class="number">2</span>;
-                <span class="comment">// Create the template using the widths inputs. This is a little confusing -- {{foo}}</span>
+                <span class="comment">// Create the template using the width as input. This is a little confusing -- {{foo}}</span>
                 <span class="comment">// is what&#39;s passed into the ProgressBar, while {bar} is inserted by the format!() statement.</span>
                 <span class="comment">//</span>
                 <span class="comment">// Note: ideally we&#39;d use the same format as our other duration displays for the elapsed time,</span>
                 <span class="comment">// but that isn&#39;t possible due to https://github.com/console-rs/indicatif/issues/440. Use</span>
                 <span class="comment">// {{elapsed_precise}} as an OK tradeoff here.</span>
                 <span class="kw">let</span> <span class="ident">template</span> <span class="op">=</span> <span class="macro">format!</span>(
-                    <span class="string">&quot;{{prefix:&gt;12}} [{{elapsed_precise:&gt;9}}] [{{bar:{bar_width}}}] \
+                    <span class="string">&quot;{{prefix:&gt;12}} [{{elapsed_precise:&gt;9}}] [{{wide_bar:40}}] \
                     {{pos:&gt;{test_count_width}}}/{{len:{test_count_width}}}: {{msg}}&quot;</span>
                 );
                 <span class="ident">progress_bar</span>.<span class="ident">set_style</span>(

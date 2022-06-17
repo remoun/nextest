@@ -1250,6 +1250,45 @@
 <span id="1245">1245</span>
 <span id="1246">1246</span>
 <span id="1247">1247</span>
+<span id="1248">1248</span>
+<span id="1249">1249</span>
+<span id="1250">1250</span>
+<span id="1251">1251</span>
+<span id="1252">1252</span>
+<span id="1253">1253</span>
+<span id="1254">1254</span>
+<span id="1255">1255</span>
+<span id="1256">1256</span>
+<span id="1257">1257</span>
+<span id="1258">1258</span>
+<span id="1259">1259</span>
+<span id="1260">1260</span>
+<span id="1261">1261</span>
+<span id="1262">1262</span>
+<span id="1263">1263</span>
+<span id="1264">1264</span>
+<span id="1265">1265</span>
+<span id="1266">1266</span>
+<span id="1267">1267</span>
+<span id="1268">1268</span>
+<span id="1269">1269</span>
+<span id="1270">1270</span>
+<span id="1271">1271</span>
+<span id="1272">1272</span>
+<span id="1273">1273</span>
+<span id="1274">1274</span>
+<span id="1275">1275</span>
+<span id="1276">1276</span>
+<span id="1277">1277</span>
+<span id="1278">1278</span>
+<span id="1279">1279</span>
+<span id="1280">1280</span>
+<span id="1281">1281</span>
+<span id="1282">1282</span>
+<span id="1283">1283</span>
+<span id="1284">1284</span>
+<span id="1285">1285</span>
+<span id="1286">1286</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
@@ -1273,6 +1312,7 @@
 <span class="kw">use</span> <span class="ident">owo_colors</span>::{<span class="ident">OwoColorize</span>, <span class="ident">Style</span>};
 <span class="kw">use</span> <span class="ident">serde::Deserialize</span>;
 <span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">borrow::Cow</span>,
     <span class="ident">cmp::Reverse</span>,
     <span class="ident">fmt</span>::{<span class="self">self</span>, <span class="ident">Write</span> <span class="kw">as</span> <span class="kw">_</span>},
     <span class="ident">io</span>,
@@ -2101,16 +2141,14 @@
                 )<span class="question-mark">?</span>;
             }
             <span class="ident">ExecutionDescription::Failure</span> { .. } =&gt; {
-                <span class="kw">let</span> <span class="ident">status_str</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">last_status</span>.<span class="ident">result</span> {
-                    <span class="ident">ExecutionResult::Fail</span> =&gt; <span class="string">&quot;FAIL&quot;</span>,
-                    <span class="ident">ExecutionResult::ExecFail</span> =&gt; <span class="string">&quot;XFAIL&quot;</span>,
-                    <span class="ident">ExecutionResult::Pass</span> =&gt; <span class="macro">unreachable!</span>(<span class="string">&quot;this is a failing test&quot;</span>),
-                    <span class="ident">ExecutionResult::Timeout</span> =&gt; <span class="string">&quot;TIMEOUT&quot;</span>,
-                };
-
                 <span class="kw">if</span> <span class="ident">last_status</span>.<span class="ident">attempt</span> <span class="op">==</span> <span class="number">1</span> {
-                    <span class="macro">write!</span>(<span class="ident">writer</span>, <span class="string">&quot;{:&gt;12} &quot;</span>, <span class="ident">status_str</span>.<span class="ident">style</span>(<span class="self">self</span>.<span class="ident">styles</span>.<span class="ident">fail</span>))<span class="question-mark">?</span>;
+                    <span class="macro">write!</span>(
+                        <span class="ident">writer</span>,
+                        <span class="string">&quot;{:&gt;12} &quot;</span>,
+                        <span class="ident">status_str</span>(<span class="ident">last_status</span>.<span class="ident">result</span>).<span class="ident">style</span>(<span class="self">self</span>.<span class="ident">styles</span>.<span class="ident">fail</span>)
+                    )<span class="question-mark">?</span>;
                 } <span class="kw">else</span> {
+                    <span class="kw">let</span> <span class="ident">status_str</span> <span class="op">=</span> <span class="ident">short_status_str</span>(<span class="ident">last_status</span>.<span class="ident">result</span>);
                     <span class="macro">write!</span>(
                         <span class="ident">writer</span>,
                         <span class="string">&quot;{:&gt;12} &quot;</span>,
@@ -2159,16 +2197,14 @@
                 )<span class="question-mark">?</span>;
             }
             <span class="ident">ExecutionDescription::Failure</span> { .. } =&gt; {
-                <span class="kw">let</span> <span class="ident">status_str</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">last_status</span>.<span class="ident">result</span> {
-                    <span class="ident">ExecutionResult::Fail</span> =&gt; <span class="string">&quot;FAIL&quot;</span>,
-                    <span class="ident">ExecutionResult::ExecFail</span> =&gt; <span class="string">&quot;XFAIL&quot;</span>,
-                    <span class="ident">ExecutionResult::Pass</span> =&gt; <span class="macro">unreachable!</span>(<span class="string">&quot;this is a failing test&quot;</span>),
-                    <span class="ident">ExecutionResult::Timeout</span> =&gt; <span class="string">&quot;TIMEOUT&quot;</span>,
-                };
-
                 <span class="kw">if</span> <span class="ident">last_status</span>.<span class="ident">attempt</span> <span class="op">==</span> <span class="number">1</span> {
-                    <span class="macro">write!</span>(<span class="ident">writer</span>, <span class="string">&quot;{:&gt;12} &quot;</span>, <span class="ident">status_str</span>.<span class="ident">style</span>(<span class="self">self</span>.<span class="ident">styles</span>.<span class="ident">fail</span>))<span class="question-mark">?</span>;
+                    <span class="macro">write!</span>(
+                        <span class="ident">writer</span>,
+                        <span class="string">&quot;{:&gt;12} &quot;</span>,
+                        <span class="ident">status_str</span>(<span class="ident">last_status</span>.<span class="ident">result</span>).<span class="ident">style</span>(<span class="self">self</span>.<span class="ident">styles</span>.<span class="ident">fail</span>)
+                    )<span class="question-mark">?</span>;
                 } <span class="kw">else</span> {
+                    <span class="kw">let</span> <span class="ident">status_str</span> <span class="op">=</span> <span class="ident">short_status_str</span>(<span class="ident">last_status</span>.<span class="ident">result</span>);
                     <span class="macro">write!</span>(
                         <span class="ident">writer</span>,
                         <span class="string">&quot;{:&gt;12} &quot;</span>,
@@ -2315,6 +2351,48 @@
             .<span class="ident">field</span>(<span class="string">&quot;stderr&quot;</span>, <span class="kw-2">&amp;</span><span class="string">&quot;BufferWriter { .. }&quot;</span>)
             .<span class="ident">finish</span>()
     }
+}
+
+<span class="kw">fn</span> <span class="ident">status_str</span>(<span class="ident">result</span>: <span class="ident">ExecutionResult</span>) -&gt; <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span> {
+    <span class="comment">// Use shorter strings for this.</span>
+    <span class="kw">match</span> <span class="ident">result</span> {
+        <span class="ident">ExecutionResult::Fail</span> { <span class="ident">signal</span>: <span class="prelude-val">Some</span>(<span class="ident">sig</span>) } =&gt; <span class="kw">match</span> <span class="ident">signal_str</span>(<span class="ident">sig</span>) {
+            <span class="prelude-val">Some</span>(<span class="ident">s</span>) =&gt; <span class="macro">format!</span>(<span class="string">&quot;SIG{s}&quot;</span>).<span class="ident">into</span>(),
+            <span class="prelude-val">None</span> =&gt; <span class="macro">format!</span>(<span class="string">&quot;ABRT SIG {sig}&quot;</span>).<span class="ident">into</span>(),
+        },
+        <span class="ident">ExecutionResult::Fail</span> { <span class="ident">signal</span>: <span class="prelude-val">None</span> } =&gt; <span class="string">&quot;FAIL&quot;</span>.<span class="ident">into</span>(),
+        <span class="ident">ExecutionResult::ExecFail</span> =&gt; <span class="string">&quot;XFAIL&quot;</span>.<span class="ident">into</span>(),
+        <span class="ident">ExecutionResult::Pass</span> =&gt; <span class="string">&quot;PASS&quot;</span>.<span class="ident">into</span>(),
+        <span class="ident">ExecutionResult::Timeout</span> =&gt; <span class="string">&quot;TIMEOUT&quot;</span>.<span class="ident">into</span>(),
+    }
+}
+
+<span class="kw">fn</span> <span class="ident">short_status_str</span>(<span class="ident">result</span>: <span class="ident">ExecutionResult</span>) -&gt; <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span> {
+    <span class="kw">match</span> <span class="ident">result</span> {
+        <span class="ident">ExecutionResult::Fail</span> { <span class="ident">signal</span>: <span class="prelude-val">Some</span>(<span class="ident">sig</span>) } =&gt; <span class="kw">match</span> <span class="ident">signal_str</span>(<span class="ident">sig</span>) {
+            <span class="prelude-val">Some</span>(<span class="ident">s</span>) =&gt; <span class="ident">s</span>.<span class="ident">into</span>(),
+            <span class="prelude-val">None</span> =&gt; <span class="macro">format!</span>(<span class="string">&quot;SIG {sig}&quot;</span>).<span class="ident">into</span>(),
+        },
+        <span class="ident">ExecutionResult::Fail</span> { <span class="ident">signal</span>: <span class="prelude-val">None</span> } =&gt; <span class="string">&quot;FAIL&quot;</span>.<span class="ident">into</span>(),
+        <span class="ident">ExecutionResult::ExecFail</span> =&gt; <span class="string">&quot;XFAIL&quot;</span>.<span class="ident">into</span>(),
+        <span class="ident">ExecutionResult::Pass</span> =&gt; <span class="string">&quot;PASS&quot;</span>.<span class="ident">into</span>(),
+        <span class="ident">ExecutionResult::Timeout</span> =&gt; <span class="string">&quot;TMT&quot;</span>.<span class="ident">into</span>(),
+    }
+}
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
+<span class="kw">fn</span> <span class="ident">signal_str</span>(<span class="ident">signal</span>: <span class="ident">i32</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
+    <span class="comment">// These signal numbers are the same on all Unixes.</span>
+    <span class="kw">match</span> <span class="ident">signal</span> {
+        <span class="number">2</span> =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;INT&quot;</span>),
+        <span class="number">11</span> =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;SEGV&quot;</span>),
+        <span class="kw">_</span> =&gt; <span class="prelude-val">None</span>,
+    }
+}
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">unix</span>))]</span>
+<span class="kw">fn</span> <span class="ident">signal_str</span>(<span class="ident">_signal</span>: <span class="ident">i32</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
+    <span class="prelude-val">None</span>
 }
 
 <span class="doccomment">/// A test event.</span>

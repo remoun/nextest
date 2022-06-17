@@ -1078,6 +1078,20 @@
 <span id="1073">1073</span>
 <span id="1074">1074</span>
 <span id="1075">1075</span>
+<span id="1076">1076</span>
+<span id="1077">1077</span>
+<span id="1078">1078</span>
+<span id="1079">1079</span>
+<span id="1080">1080</span>
+<span id="1081">1081</span>
+<span id="1082">1082</span>
+<span id="1083">1083</span>
+<span id="1084">1084</span>
+<span id="1085">1085</span>
+<span id="1086">1086</span>
+<span id="1087">1087</span>
+<span id="1088">1088</span>
+<span id="1089">1089</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
@@ -1530,7 +1544,16 @@
             <span class="kw">if</span> <span class="ident">output</span>.<span class="ident">status</span>.<span class="ident">success</span>() {
                 <span class="ident">ExecutionResult::Pass</span>
             } <span class="kw">else</span> {
-                <span class="ident">ExecutionResult::Fail</span>
+                <span class="comment">// On Unix, extract the signal if it&#39;s found.</span>
+                <span class="macro">cfg_if::cfg_if!</span> {
+                    <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span> {
+                        <span class="kw">use</span> <span class="ident">std::os::unix::process::ExitStatusExt</span>;
+                        <span class="kw">let</span> <span class="ident">signal</span> <span class="op">=</span> <span class="ident">output</span>.<span class="ident">status</span>.<span class="ident">signal</span>();
+                    } <span class="kw">else</span> {
+                        <span class="kw">let</span> <span class="ident">signal</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+                    }
+                }
+                <span class="ident">ExecutionResult::Fail</span> { <span class="ident">signal</span> }
             }
         });
 
@@ -1803,7 +1826,7 @@
                     <span class="self">self</span>.<span class="ident">flaky</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
                 }
             }
-            <span class="ident">ExecutionResult::Fail</span> =&gt; <span class="self">self</span>.<span class="ident">failed</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>,
+            <span class="ident">ExecutionResult::Fail</span> { .. } =&gt; <span class="self">self</span>.<span class="ident">failed</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>,
             <span class="ident">ExecutionResult::Timeout</span> =&gt; <span class="self">self</span>.<span class="ident">timed_out</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>,
             <span class="ident">ExecutionResult::ExecFail</span> =&gt; <span class="self">self</span>.<span class="ident">exec_failed</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>,
         }
@@ -1988,7 +2011,10 @@
     <span class="doccomment">/// The test passed.</span>
     <span class="ident">Pass</span>,
     <span class="doccomment">/// The test failed.</span>
-    <span class="ident">Fail</span>,
+    <span class="ident">Fail</span> {
+        <span class="doccomment">/// The signal the test failed with, if any. Only relevant on Unix.</span>
+        <span class="ident">signal</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span>,
+    },
     <span class="doccomment">/// An error occurred while executing the test.</span>
     <span class="ident">ExecFail</span>,
     <span class="doccomment">/// The test was terminated due to timeout.</span>
@@ -2000,7 +2026,9 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_success</span>(<span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">ExecutionResult::Pass</span> =&gt; <span class="bool-val">true</span>,
-            <span class="ident">ExecutionResult::Fail</span> <span class="op">|</span> <span class="ident">ExecutionResult::ExecFail</span> <span class="op">|</span> <span class="ident">ExecutionResult::Timeout</span> =&gt; <span class="bool-val">false</span>,
+            <span class="ident">ExecutionResult::Fail</span> { .. } <span class="op">|</span> <span class="ident">ExecutionResult::ExecFail</span> <span class="op">|</span> <span class="ident">ExecutionResult::Timeout</span> =&gt; {
+                <span class="bool-val">false</span>
+            }
         }
     }
 }

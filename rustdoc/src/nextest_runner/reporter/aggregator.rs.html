@@ -199,6 +199,16 @@
 <span id="194">194</span>
 <span id="195">195</span>
 <span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
@@ -215,7 +225,7 @@
 <span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">DateTime</span>, <span class="ident">FixedOffset</span>, <span class="ident">Utc</span>};
 <span class="kw">use</span> <span class="ident">debug_ignore::DebugIgnore</span>;
 <span class="kw">use</span> <span class="ident">quick_junit</span>::{<span class="ident">NonSuccessKind</span>, <span class="ident">Report</span>, <span class="ident">TestCase</span>, <span class="ident">TestCaseStatus</span>, <span class="ident">TestRerun</span>, <span class="ident">TestSuite</span>};
-<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">collections::HashMap</span>, <span class="ident">fs::File</span>, <span class="ident">time::SystemTime</span>};
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">borrow::Cow</span>, <span class="ident">collections::HashMap</span>, <span class="ident">fs::File</span>, <span class="ident">time::SystemTime</span>};
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
@@ -269,11 +279,21 @@
                 <span class="ident">run_statuses</span>,
                 ..
             } =&gt; {
-                <span class="kw">fn</span> <span class="ident">kind_ty</span>(<span class="ident">run_status</span>: <span class="kw-2">&amp;</span><span class="ident">ExecuteStatus</span>) -&gt; (<span class="ident">NonSuccessKind</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>) {
+                <span class="kw">fn</span> <span class="ident">kind_ty</span>(<span class="ident">run_status</span>: <span class="kw-2">&amp;</span><span class="ident">ExecuteStatus</span>) -&gt; (<span class="ident">NonSuccessKind</span>, <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span>) {
                     <span class="kw">match</span> <span class="ident">run_status</span>.<span class="ident">result</span> {
-                        <span class="ident">ExecutionResult::Fail</span> =&gt; (<span class="ident">NonSuccessKind::Failure</span>, <span class="string">&quot;test failure&quot;</span>),
-                        <span class="ident">ExecutionResult::Timeout</span> =&gt; (<span class="ident">NonSuccessKind::Failure</span>, <span class="string">&quot;test timeout&quot;</span>),
-                        <span class="ident">ExecutionResult::ExecFail</span> =&gt; (<span class="ident">NonSuccessKind::Error</span>, <span class="string">&quot;execution failure&quot;</span>),
+                        <span class="ident">ExecutionResult::Fail</span> { <span class="ident">signal</span>: <span class="prelude-val">Some</span>(<span class="ident">sig</span>) } =&gt; (
+                            <span class="ident">NonSuccessKind::Failure</span>,
+                            <span class="macro">format!</span>(<span class="string">&quot;test failure due to signal {}&quot;</span>, <span class="ident">sig</span>).<span class="ident">into</span>(),
+                        ),
+                        <span class="ident">ExecutionResult::Fail</span> { <span class="ident">signal</span>: <span class="prelude-val">None</span> } =&gt; {
+                            (<span class="ident">NonSuccessKind::Failure</span>, <span class="string">&quot;test failure&quot;</span>.<span class="ident">into</span>())
+                        }
+                        <span class="ident">ExecutionResult::Timeout</span> =&gt; {
+                            (<span class="ident">NonSuccessKind::Failure</span>, <span class="string">&quot;test timeout&quot;</span>.<span class="ident">into</span>())
+                        }
+                        <span class="ident">ExecutionResult::ExecFail</span> =&gt; {
+                            (<span class="ident">NonSuccessKind::Error</span>, <span class="string">&quot;execution failure&quot;</span>.<span class="ident">into</span>())
+                        }
                         <span class="ident">ExecutionResult::Pass</span> =&gt; <span class="macro">unreachable!</span>(<span class="string">&quot;this is a failure status&quot;</span>),
                     }
                 }

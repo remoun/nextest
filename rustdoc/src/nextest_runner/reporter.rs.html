@@ -1289,6 +1289,18 @@
 <span id="1284">1284</span>
 <span id="1285">1285</span>
 <span id="1286">1286</span>
+<span id="1287">1287</span>
+<span id="1288">1288</span>
+<span id="1289">1289</span>
+<span id="1290">1290</span>
+<span id="1291">1291</span>
+<span id="1292">1292</span>
+<span id="1293">1293</span>
+<span id="1294">1294</span>
+<span id="1295">1295</span>
+<span id="1296">1296</span>
+<span id="1297">1297</span>
+<span id="1298">1298</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
@@ -2382,10 +2394,22 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
 <span class="kw">fn</span> <span class="ident">signal_str</span>(<span class="ident">signal</span>: <span class="ident">i32</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
-    <span class="comment">// These signal numbers are the same on all Unixes.</span>
+    <span class="comment">// These signal numbers are the same on at least Linux, macOS and FreeBSD.</span>
     <span class="kw">match</span> <span class="ident">signal</span> {
+        <span class="number">1</span> =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;HUP&quot;</span>),
         <span class="number">2</span> =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;INT&quot;</span>),
+        <span class="number">5</span> =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;TRAP&quot;</span>),
+        <span class="number">6</span> =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;ABRT&quot;</span>),
+        <span class="number">8</span> =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;FPE&quot;</span>),
+        <span class="number">9</span> =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;KILL&quot;</span>),
         <span class="number">11</span> =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;SEGV&quot;</span>),
+        <span class="number">13</span> =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;PIPE&quot;</span>),
+        <span class="number">14</span> =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;ALRM&quot;</span>),
+        <span class="number">15</span> =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;TERM&quot;</span>),
+        <span class="number">24</span> =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;XCPU&quot;</span>),
+        <span class="number">25</span> =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;XFSZ&quot;</span>),
+        <span class="number">26</span> =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;VTALRM&quot;</span>),
+        <span class="number">27</span> =&gt; <span class="prelude-val">Some</span>(<span class="string">&quot;PROF&quot;</span>),
         <span class="kw">_</span> =&gt; <span class="prelude-val">None</span>,
     }
 }

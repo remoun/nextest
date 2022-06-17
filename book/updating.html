@@ -159,7 +159,7 @@
 <h2 id="for-older-versions"><a class="header" href="#for-older-versions">For older versions</a></h2>
 <p>For cargo-nextest 0.9.18 or below, update by redownloading and reinstalling the binary following the instructions at <a href="pre-built-binaries.html">Pre-built binaries</a>.</p>
 <h2 id="for-distributors"><a class="header" href="#for-distributors">For distributors</a></h2>
-<p>To disable the self-update functionality, build cargo-nextest with <code>--no-default-features</code>.</p>
+<p><code>cargo-nextest</code> 0.9.21 and above has a new <code>default-no-update</code> feature, which will contain all default features except for self-update. The recommended, forward-compatible way to build cargo-nextest is with <code>--no-default-features --features default-no-update</code>.</p>
 
                     </main>
 

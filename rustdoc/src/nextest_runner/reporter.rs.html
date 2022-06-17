@@ -1617,8 +1617,8 @@
                 <span class="comment">// but that isn&#39;t possible due to https://github.com/console-rs/indicatif/issues/440. Use</span>
                 <span class="comment">// {{elapsed_precise}} as an OK tradeoff here.</span>
                 <span class="kw">let</span> <span class="ident">template</span> <span class="op">=</span> <span class="macro">format!</span>(
-                    <span class="string">&quot;{{prefix:&gt;12}} [{{elapsed_precise:&gt;9}}] [{{wide_bar:40}}] \
-                    {{pos:&gt;{test_count_width}}}/{{len:{test_count_width}}}: {{msg}}&quot;</span>
+                    <span class="string">&quot;{{prefix:&gt;12}} [{{elapsed_precise:&gt;9}}] [{{wide_bar}}] \
+                    {{pos:&gt;{test_count_width}}}/{{len:{test_count_width}}}: {{msg}}     &quot;</span>
                 );
                 <span class="ident">progress_bar</span>.<span class="ident">set_style</span>(
                     <span class="ident">ProgressStyle::default_bar</span>()

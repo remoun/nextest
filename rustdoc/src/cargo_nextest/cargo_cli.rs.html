@@ -380,7 +380,7 @@
     <span class="ident">build_jobs</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
 
     <span class="doccomment">/// Space or comma separated list of features to activate</span>
-    <span class="attribute">#[<span class="ident">clap</span>(<span class="ident">long</span>, <span class="ident">group</span> <span class="op">=</span> <span class="string">&quot;cargo-opts&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">clap</span>(<span class="ident">long</span>, <span class="ident">short</span> <span class="op">=</span> <span class="string">&#39;F&#39;</span>, <span class="ident">group</span> <span class="op">=</span> <span class="string">&quot;cargo-opts&quot;</span>)]</span>
     <span class="ident">features</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
 
     <span class="doccomment">/// Activate all available features</span>

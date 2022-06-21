@@ -414,13 +414,18 @@
 <span id="409">409</span>
 <span id="410">410</span>
 <span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
 <span class="doccomment">//! Serialize a `Report`.</span>
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
-    <span class="ident">NonSuccessKind</span>, <span class="ident">Output</span>, <span class="ident">Property</span>, <span class="ident">Report</span>, <span class="ident">TestCase</span>, <span class="ident">TestCaseStatus</span>, <span class="ident">TestRerun</span>, <span class="ident">TestSuite</span>,
+    <span class="ident">NonSuccessKind</span>, <span class="ident">Output</span>, <span class="ident">Property</span>, <span class="ident">Report</span>, <span class="ident">SerializeError</span>, <span class="ident">TestCase</span>, <span class="ident">TestCaseStatus</span>, <span class="ident">TestRerun</span>,
+    <span class="ident">TestSuite</span>,
 };
 <span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">DateTime</span>, <span class="ident">FixedOffset</span>};
 <span class="kw">use</span> <span class="ident">quick_xml</span>::{
@@ -445,7 +450,10 @@
 <span class="kw">static</span> <span class="ident">SYSTEM_OUT_TAG</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;system-out&quot;</span>;
 <span class="kw">static</span> <span class="ident">SYSTEM_ERR_TAG</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;system-err&quot;</span>;
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">serialize_report</span>(<span class="ident">report</span>: <span class="kw-2">&amp;</span><span class="ident">Report</span>, <span class="ident">writer</span>: <span class="kw">impl</span> <span class="ident">io::Write</span>) -&gt; <span class="ident">quick_xml::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">serialize_report</span>(
+    <span class="ident">report</span>: <span class="kw-2">&amp;</span><span class="ident">Report</span>,
+    <span class="ident">writer</span>: <span class="kw">impl</span> <span class="ident">io::Write</span>,
+) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">SerializeError</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">writer</span> <span class="op">=</span> <span class="ident">Writer::new_with_indent</span>(<span class="ident">writer</span>, <span class="string">b&#39; &#39;</span>, <span class="number">4</span>);
 
     <span class="kw">let</span> <span class="ident">decl</span> <span class="op">=</span> <span class="ident">BytesDecl::new</span>(<span class="string">b&quot;1.0&quot;</span>, <span class="prelude-val">Some</span>(<span class="string">b&quot;UTF-8&quot;</span>), <span class="prelude-val">None</span>);
@@ -454,7 +462,7 @@
     <span class="ident">serialize_report_impl</span>(<span class="ident">report</span>, <span class="kw-2">&amp;mut</span> <span class="ident">writer</span>)<span class="question-mark">?</span>;
 
     <span class="comment">// Add a trailing newline.</span>
-    <span class="ident">writer</span>.<span class="ident">write_indent</span>()
+    <span class="prelude-val">Ok</span>(<span class="ident">writer</span>.<span class="ident">write_indent</span>()<span class="question-mark">?</span>)
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">serialize_report_impl</span>(

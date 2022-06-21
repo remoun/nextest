@@ -1296,6 +1296,10 @@
 <span id="1291">1291</span>
 <span id="1292">1292</span>
 <span id="1293">1293</span>
+<span id="1294">1294</span>
+<span id="1295">1295</span>
+<span id="1296">1296</span>
+<span id="1297">1297</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
@@ -2286,14 +2290,7 @@
             <span class="self">self</span>.<span class="ident">write_instance</span>(<span class="kw-2">*</span><span class="ident">test_instance</span>, <span class="kw-2">&amp;mut</span> <span class="ident">writer</span>)<span class="question-mark">?</span>;
             <span class="macro">writeln!</span>(<span class="ident">writer</span>, <span class="string">&quot;{}&quot;</span>, <span class="string">&quot; ---&quot;</span>.<span class="ident">style</span>(<span class="ident">header_style</span>))<span class="question-mark">?</span>;
 
-            {
-                <span class="comment">// Strip ANSI escapes from the output in case some test framework doesn&#39;t check for</span>
-                <span class="comment">// ttys before producing color output.</span>
-                <span class="comment">// TODO: apply output style once https://github.com/jam1garner/owo-colors/issues/41 is</span>
-                <span class="comment">// fixed</span>
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">no_color</span> <span class="op">=</span> <span class="ident">strip_ansi_escapes::Writer::new</span>(<span class="kw-2">&amp;mut</span> <span class="ident">writer</span>);
-                <span class="ident">no_color</span>.<span class="ident">write_all</span>(<span class="ident">run_status</span>.<span class="ident">stdout</span>())<span class="question-mark">?</span>;
-            }
+            <span class="self">self</span>.<span class="ident">write_test_output</span>(<span class="ident">run_status</span>.<span class="ident">stdout</span>(), <span class="kw-2">&amp;mut</span> <span class="ident">writer</span>)<span class="question-mark">?</span>;
         }
 
         <span class="kw">if</span> <span class="op">!</span><span class="ident">run_status</span>.<span class="ident">stderr</span>().<span class="ident">is_empty</span>() {
@@ -2309,17 +2306,26 @@
             <span class="self">self</span>.<span class="ident">write_instance</span>(<span class="kw-2">*</span><span class="ident">test_instance</span>, <span class="kw-2">&amp;mut</span> <span class="ident">writer</span>)<span class="question-mark">?</span>;
             <span class="macro">writeln!</span>(<span class="ident">writer</span>, <span class="string">&quot;{}&quot;</span>, <span class="string">&quot; ---&quot;</span>.<span class="ident">style</span>(<span class="ident">header_style</span>))<span class="question-mark">?</span>;
 
-            {
-                <span class="comment">// Strip ANSI escapes from the output in case some test framework doesn&#39;t check for</span>
-                <span class="comment">// ttys before producing color output.</span>
-                <span class="comment">// TODO: apply output style once https://github.com/jam1garner/owo-colors/issues/41 is</span>
-                <span class="comment">// fixed</span>
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">no_color</span> <span class="op">=</span> <span class="ident">strip_ansi_escapes::Writer::new</span>(<span class="kw-2">&amp;mut</span> <span class="ident">writer</span>);
-                <span class="ident">no_color</span>.<span class="ident">write_all</span>(<span class="ident">run_status</span>.<span class="ident">stderr</span>())<span class="question-mark">?</span>;
-            }
+            <span class="self">self</span>.<span class="ident">write_test_output</span>(<span class="ident">run_status</span>.<span class="ident">stderr</span>(), <span class="kw-2">&amp;mut</span> <span class="ident">writer</span>)<span class="question-mark">?</span>;
         }
 
         <span class="macro">writeln!</span>(<span class="ident">writer</span>)
+    }
+
+    <span class="kw">fn</span> <span class="ident">write_test_output</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">output</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">writer</span>: <span class="kw-2">&amp;mut</span> <span class="kw">impl</span> <span class="ident">Write</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">styles</span>.<span class="ident">is_colorized</span> {
+            <span class="kw">const</span> <span class="ident">RESET_COLOR</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] <span class="op">=</span> <span class="string">b&quot;\x1b[0m&quot;</span>;
+            <span class="comment">// Output the text without stripping ANSI escapes, then reset the color afterwards in case</span>
+            <span class="comment">// the output is malformed.</span>
+            <span class="ident">writer</span>.<span class="ident">write_all</span>(<span class="ident">output</span>)<span class="question-mark">?</span>;
+            <span class="ident">writer</span>.<span class="ident">write_all</span>(<span class="ident">RESET_COLOR</span>)<span class="question-mark">?</span>;
+        } <span class="kw">else</span> {
+            <span class="comment">// Strip ANSI escapes from the output if nextest itself isn&#39;t colorized.</span>
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">no_color</span> <span class="op">=</span> <span class="ident">strip_ansi_escapes::Writer::new</span>(<span class="ident">writer</span>);
+            <span class="ident">no_color</span>.<span class="ident">write_all</span>(<span class="ident">output</span>)<span class="question-mark">?</span>;
+        }
+
+        <span class="prelude-val">Ok</span>(())
     }
 
     <span class="comment">// Returns the number of characters written out to the screen.</span>
@@ -2525,6 +2531,7 @@
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Default</span>)]</span>
 <span class="kw">struct</span> <span class="ident">Styles</span> {
+    <span class="ident">is_colorized</span>: <span class="ident">bool</span>,
     <span class="ident">count</span>: <span class="ident">Style</span>,
     <span class="ident">pass</span>: <span class="ident">Style</span>,
     <span class="ident">retry</span>: <span class="ident">Style</span>,
@@ -2538,6 +2545,7 @@
 
 <span class="kw">impl</span> <span class="ident">Styles</span> {
     <span class="kw">fn</span> <span class="ident">colorize</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
+        <span class="self">self</span>.<span class="ident">is_colorized</span> <span class="op">=</span> <span class="bool-val">true</span>;
         <span class="self">self</span>.<span class="ident">count</span> <span class="op">=</span> <span class="ident">Style::new</span>().<span class="ident">bold</span>();
         <span class="self">self</span>.<span class="ident">pass</span> <span class="op">=</span> <span class="ident">Style::new</span>().<span class="ident">green</span>().<span class="ident">bold</span>();
         <span class="self">self</span>.<span class="ident">retry</span> <span class="op">=</span> <span class="ident">Style::new</span>().<span class="ident">magenta</span>().<span class="ident">bold</span>();

@@ -174,7 +174,7 @@
 <p>If pre-built binaries are not available for your platform, or you'd otherwise like to install cargo-nextest from source, here's what you need to do:</p>
 <h2 id="installing-from-cratesio"><a class="header" href="#installing-from-cratesio">Installing from crates.io</a></h2>
 <p>Run the following command:</p>
-<pre><code>cargo install cargo-nextest
+<pre><code>cargo install cargo-nextest --locked
 </code></pre>
 <p><code>cargo nextest</code> must be compiled and installed with <strong>Rust 1.59</strong> or later (see <a href="stability.html#minimum-supported-rust-version-msrv">Stability policy</a> for more), but it can build and run
 tests against any version of Rust.</p>
@@ -194,6 +194,7 @@ the cargo-nextest binary.</p>
         uses: baptiste0928/cargo-install@v1
         with:
           crate: cargo-nextest
+          locked: true
           # Uncomment the following line if you'd like to stay on the 0.9 series
           # version: 0.9
       # At this point, cargo-nextest will be available on your PATH

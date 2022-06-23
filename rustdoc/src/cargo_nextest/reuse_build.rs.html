@@ -213,13 +213,10 @@
 <span id="208">208</span>
 <span id="209">209</span>
 <span id="210">210</span>
-<span id="211">211</span>
-<span id="212">212</span>
-<span id="213">213</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">output::OutputContext</span>, <span class="ident">ExpectedError</span>, <span class="ident">OutputWriter</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">output::OutputContext</span>, <span class="ident">ExpectedError</span>, <span class="ident">OutputWriter</span>, <span class="prelude-ty">Result</span>};
 <span class="kw">use</span> <span class="ident">camino</span>::{<span class="ident">Utf8Path</span>, <span class="ident">Utf8PathBuf</span>};
 <span class="kw">use</span> <span class="ident">clap</span>::{<span class="ident">ArgEnum</span>, <span class="ident">Args</span>};
 <span class="kw">use</span> <span class="ident">guppy::graph::PackageGraph</span>;
@@ -327,7 +324,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">output</span>: <span class="ident">OutputContext</span>,
         <span class="ident">output_writer</span>: <span class="kw-2">&amp;mut</span> <span class="ident">OutputWriter</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ReuseBuildInfo</span>, <span class="ident">ExpectedError</span><span class="op">&gt;</span> {
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ReuseBuildInfo</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">archive_file</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">archive_file</span> {
             <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">archive_format</span>.<span class="ident">to_archive_format</span>(<span class="ident">archive_file</span>)<span class="question-mark">?</span>;
             <span class="comment">// Process this archive.</span>
@@ -388,10 +385,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">ArchiveFormatOpt</span> {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">to_archive_format</span>(
-        <span class="self">self</span>,
-        <span class="ident">archive_file</span>: <span class="kw-2">&amp;</span><span class="ident">Utf8Path</span>,
-    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ArchiveFormat</span>, <span class="ident">ExpectedError</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">to_archive_format</span>(<span class="self">self</span>, <span class="ident">archive_file</span>: <span class="kw-2">&amp;</span><span class="ident">Utf8Path</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ArchiveFormat</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident"><span class="self">Self</span>::TarZst</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">ArchiveFormat::TarZst</span>),
             <span class="ident"><span class="self">Self</span>::Auto</span> =&gt; <span class="ident">ArchiveFormat::autodetect</span>(<span class="ident">archive_file</span>).<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">err</span><span class="op">|</span> {
@@ -414,7 +408,7 @@
     <span class="ident">info</span>: <span class="kw-2">&amp;</span><span class="ident">ReuseBuildInfo</span>,
     <span class="ident">graph</span>: <span class="kw-2">&amp;</span><span class="ident">PackageGraph</span>,
     <span class="ident">orig_target_dir</span>: <span class="kw-2">&amp;</span><span class="ident">Utf8Path</span>,
-) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">PathMapper</span>, <span class="ident">ExpectedError</span><span class="op">&gt;</span> {
+) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">PathMapper</span><span class="op">&gt;</span> {
     <span class="ident">PathMapper::new</span>(
         <span class="ident">graph</span>.<span class="ident">workspace</span>().<span class="ident">root</span>(),
         <span class="ident">info</span>.<span class="ident">workspace_remap</span>(),

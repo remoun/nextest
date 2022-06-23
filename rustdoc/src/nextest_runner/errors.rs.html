@@ -902,6 +902,11 @@
 <span id="897">897</span>
 <span id="898">898</span>
 <span id="899">899</span>
+<span id="900">900</span>
+<span id="901">901</span>
+<span id="902">902</span>
+<span id="903">903</span>
+<span id="904">904</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
@@ -1612,6 +1617,11 @@
         <span class="ident">CargoConfigSearchError</span>,
     ),
 }
+
+<span class="doccomment">/// An error that occurred while setting up the signal handler.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Error</span>)]</span>
+<span class="attribute">#[<span class="ident">error</span>(<span class="ident">transparent</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SignalHandlerSetupError</span>(<span class="attribute">#[<span class="ident">from</span>]</span> <span class="ident">ctrlc::Error</span>);
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;self-update&quot;</span>)]</span>
 <span class="kw">mod</span> <span class="ident">self_update_errors</span> {

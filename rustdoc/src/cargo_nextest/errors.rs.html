@@ -426,6 +426,122 @@
 <span id="421">421</span>
 <span id="422">422</span>
 <span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
+<span id="434">434</span>
+<span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
+<span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
+<span id="496">496</span>
+<span id="497">497</span>
+<span id="498">498</span>
+<span id="499">499</span>
+<span id="500">500</span>
+<span id="501">501</span>
+<span id="502">502</span>
+<span id="503">503</span>
+<span id="504">504</span>
+<span id="505">505</span>
+<span id="506">506</span>
+<span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
+<span id="522">522</span>
+<span id="523">523</span>
+<span id="524">524</span>
+<span id="525">525</span>
+<span id="526">526</span>
+<span id="527">527</span>
+<span id="528">528</span>
+<span id="529">529</span>
+<span id="530">530</span>
+<span id="531">531</span>
+<span id="532">532</span>
+<span id="533">533</span>
+<span id="534">534</span>
+<span id="535">535</span>
+<span id="536">536</span>
+<span id="537">537</span>
+<span id="538">538</span>
+<span id="539">539</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
@@ -434,10 +550,10 @@
 <span class="kw">use</span> <span class="ident">nextest_metadata::NextestExitCode</span>;
 <span class="kw">use</span> <span class="ident">nextest_runner::errors</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">owo_colors</span>::{<span class="ident">OwoColorize</span>, <span class="ident">Stream</span>};
-<span class="kw">use</span> <span class="ident">std</span>::{
-    <span class="ident">error</span>::{<span class="self">self</span>, <span class="ident">Error</span>},
-    <span class="ident">fmt</span>,
-};
+<span class="kw">use</span> <span class="ident">std::error::Error</span>;
+<span class="kw">use</span> <span class="ident">thiserror::Error</span>;
+
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">type</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">E</span> <span class="op">=</span> <span class="ident">ExpectedError</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">std::result::Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">E</span><span class="op">&gt;</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
@@ -447,77 +563,155 @@
     <span class="ident">Reuse</span>,
 }
 
+<span class="comment">// Note that the #[error()] strings are mostly placeholder messages -- the expected way to print out</span>
+<span class="comment">// errors is with the display_to_stderr method, which colorizes errors.</span>
+
 <span class="doccomment">/// An error occurred in a program that nextest ran, not in nextest itself.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Error</span>)]</span>
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ExpectedError</span> {
-    <span class="ident">CargoMetadataFailed</span>,
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;cargo metadata exec failed&quot;</span>)]</span>
+    <span class="ident">CargoMetadataExecFailed</span> {
+        <span class="ident">command</span>: <span class="ident">String</span>,
+        <span class="ident">err</span>: <span class="ident">std::io::Error</span>,
+    },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;cargo metadata failed&quot;</span>)]</span>
+    <span class="ident">CargoMetadataFailed</span> { <span class="ident">command</span>: <span class="ident">String</span> },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;root manifest not found at {path}&quot;</span>)]</span>
     <span class="ident">RootManifestNotFound</span> {
         <span class="ident">path</span>: <span class="ident">Utf8PathBuf</span>,
         <span class="ident">reuse_build_kind</span>: <span class="ident">ReuseBuildKind</span>,
     },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;profile not found&quot;</span>)]</span>
     <span class="ident">ProfileNotFound</span> {
+        <span class="attribute">#[<span class="ident">from</span>]</span>
         <span class="ident">err</span>: <span class="ident">ProfileNotFound</span>,
     },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to create store directory&quot;</span>)]</span>
+    <span class="ident">StoreDirCreateError</span> {
+        <span class="ident">store_dir</span>: <span class="ident">Utf8PathBuf</span>,
+        <span class="attribute">#[<span class="ident">source</span>]</span>
+        <span class="ident">err</span>: <span class="ident">std::io::Error</span>,
+    },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;cargo configs construction error&quot;</span>)]</span>
     <span class="ident">CargoConfigsConstructError</span> {
+        <span class="attribute">#[<span class="ident">from</span>]</span>
         <span class="ident">err</span>: <span class="ident">CargoConfigsConstructError</span>,
     },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;config parse error&quot;</span>)]</span>
     <span class="ident">ConfigParseError</span> {
+        <span class="attribute">#[<span class="ident">from</span>]</span>
         <span class="ident">err</span>: <span class="ident">ConfigParseError</span>,
     },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;argument file read error&quot;</span>)]</span>
     <span class="ident">ArgumentFileReadError</span> {
         <span class="ident">arg_name</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>,
         <span class="ident">file_name</span>: <span class="ident">Utf8PathBuf</span>,
+        <span class="attribute">#[<span class="ident">source</span>]</span>
         <span class="ident">err</span>: <span class="ident">std::io::Error</span>,
     },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;unknown archive format&quot;</span>)]</span>
     <span class="ident">UnknownArchiveFormat</span> {
         <span class="ident">archive_file</span>: <span class="ident">Utf8PathBuf</span>,
+        <span class="attribute">#[<span class="ident">source</span>]</span>
         <span class="ident">err</span>: <span class="ident">UnknownArchiveFormat</span>,
     },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;archive create error&quot;</span>)]</span>
     <span class="ident">ArchiveCreateError</span> {
         <span class="ident">archive_file</span>: <span class="ident">Utf8PathBuf</span>,
+        <span class="attribute">#[<span class="ident">source</span>]</span>
         <span class="ident">err</span>: <span class="ident">ArchiveCreateError</span>,
     },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;archive extract error&quot;</span>)]</span>
     <span class="ident">ArchiveExtractError</span> {
         <span class="ident">archive_file</span>: <span class="ident">Utf8PathBuf</span>,
+        <span class="attribute">#[<span class="ident">source</span>]</span>
         <span class="ident">err</span>: <span class="ident">ArchiveExtractError</span>,
     },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;path mapper construct error&quot;</span>)]</span>
     <span class="ident">PathMapperConstructError</span> {
         <span class="ident">arg_name</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>,
+        <span class="attribute">#[<span class="ident">source</span>]</span>
         <span class="ident">err</span>: <span class="ident">PathMapperConstructError</span>,
     },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;argument json parse error&quot;</span>)]</span>
     <span class="ident">ArgumentJsonParseError</span> {
         <span class="ident">arg_name</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>,
         <span class="ident">file_name</span>: <span class="ident">Utf8PathBuf</span>,
+        <span class="attribute">#[<span class="ident">source</span>]</span>
         <span class="ident">err</span>: <span class="ident">serde_json::Error</span>,
     },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;cargo metadata parse error&quot;</span>)]</span>
     <span class="ident">CargoMetadataParseError</span> {
         <span class="ident">file_name</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Utf8PathBuf</span><span class="op">&gt;</span>,
+        <span class="attribute">#[<span class="ident">source</span>]</span>
         <span class="ident">err</span>: <span class="ident">guppy::Error</span>,
     },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;error parsing Cargo messages&quot;</span>)]</span>
+    <span class="ident">FromMessagesError</span> {
+        <span class="attribute">#[<span class="ident">from</span>]</span>
+        <span class="ident">err</span>: <span class="ident">FromMessagesError</span>,
+    },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;create test list error&quot;</span>)]</span>
     <span class="ident">CreateTestListError</span> {
+        <span class="attribute">#[<span class="ident">source</span>]</span>
         <span class="ident">err</span>: <span class="ident">CreateTestListError</span>,
     },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to execute build command&quot;</span>)]</span>
+    <span class="ident">BuildExecFailed</span> {
+        <span class="ident">command</span>: <span class="ident">String</span>,
+        <span class="attribute">#[<span class="ident">source</span>]</span>
+        <span class="ident">err</span>: <span class="ident">std::io::Error</span>,
+    },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;build failed&quot;</span>)]</span>
     <span class="ident">BuildFailed</span> {
         <span class="ident">command</span>: <span class="ident">String</span>,
         <span class="ident">exit_code</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span>,
     },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;writing test list to output failed&quot;</span>)]</span>
+    <span class="ident">WriteTestListError</span> {
+        <span class="attribute">#[<span class="ident">from</span>]</span>
+        <span class="ident">err</span>: <span class="ident">WriteTestListError</span>,
+    },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;writing event failed&quot;</span>)]</span>
+    <span class="ident">WriteEventError</span> {
+        <span class="attribute">#[<span class="ident">from</span>]</span>
+        <span class="ident">err</span>: <span class="ident">WriteEventError</span>,
+    },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;test run failed&quot;</span>)]</span>
     <span class="ident">TestRunFailed</span>,
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;self-update&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to parse --version&quot;</span>)]</span>
     <span class="ident">UpdateVersionParseError</span> {
+        <span class="attribute">#[<span class="ident">from</span>]</span>
         <span class="ident">err</span>: <span class="ident">UpdateVersionParseError</span>,
     },
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;self-update&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to update&quot;</span>)]</span>
     <span class="ident">UpdateError</span> {
+        <span class="attribute">#[<span class="ident">from</span>]</span>
         <span class="ident">err</span>: <span class="ident">UpdateError</span>,
     },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;error reading prompt&quot;</span>)]</span>
+    <span class="ident">DialoguerError</span> {
+        <span class="attribute">#[<span class="ident">source</span>]</span>
+        <span class="ident">err</span>: <span class="ident">std::io::Error</span>,
+    },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;failed to set up Ctrl-C handler&quot;</span>)]</span>
+    <span class="ident">SignalHandlerSetupError</span> {
+        <span class="attribute">#[<span class="ident">from</span>]</span>
+        <span class="ident">err</span>: <span class="ident">SignalHandlerSetupError</span>,
+    },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;experimental feature not enabled&quot;</span>)]</span>
     <span class="ident">ExperimentalFeatureNotEnabled</span> {
         <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>,
         <span class="ident">var_name</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>,
     },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;filter expression parse error&quot;</span>)]</span>
     <span class="ident">FilterExpressionParseError</span> {
         <span class="ident">all_errors</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">FilterExpressionParseErrors</span><span class="op">&gt;</span>,
     },
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;test binary args parse error&quot;</span>)]</span>
     <span class="ident">TestBinaryArgsParseError</span> {
         <span class="ident">reason</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>,
         <span class="ident">args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
@@ -525,8 +719,21 @@
 }
 
 <span class="kw">impl</span> <span class="ident">ExpectedError</span> {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">cargo_metadata_failed</span>() -&gt; <span class="self">Self</span> {
-        <span class="ident"><span class="self">Self</span>::CargoMetadataFailed</span>
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">cargo_metadata_exec_failed</span>(
+        <span class="ident">command</span>: <span class="kw">impl</span> <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+        <span class="ident">err</span>: <span class="ident">std::io::Error</span>,
+    ) -&gt; <span class="self">Self</span> {
+        <span class="ident"><span class="self">Self</span>::CargoMetadataExecFailed</span> {
+            <span class="ident">command</span>: <span class="ident">shell_words::join</span>(<span class="ident">command</span>),
+            <span class="ident">err</span>,
+        }
+    }
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">cargo_metadata_failed</span>(
+        <span class="ident">command</span>: <span class="kw">impl</span> <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    ) -&gt; <span class="self">Self</span> {
+        <span class="ident"><span class="self">Self</span>::CargoMetadataFailed</span> {
+            <span class="ident">command</span>: <span class="ident">shell_words::join</span>(<span class="ident">command</span>),
+        }
     }
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">profile_not_found</span>(<span class="ident">err</span>: <span class="ident">ProfileNotFound</span>) -&gt; <span class="self">Self</span> {
@@ -575,6 +782,16 @@
         <span class="ident"><span class="self">Self</span>::ExperimentalFeatureNotEnabled</span> { <span class="ident">name</span>, <span class="ident">var_name</span> }
     }
 
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">build_exec_failed</span>(
+        <span class="ident">command</span>: <span class="kw">impl</span> <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+        <span class="ident">err</span>: <span class="ident">std::io::Error</span>,
+    ) -&gt; <span class="self">Self</span> {
+        <span class="ident"><span class="self">Self</span>::BuildExecFailed</span> {
+            <span class="ident">command</span>: <span class="ident">shell_words::join</span>(<span class="ident">command</span>),
+            <span class="ident">err</span>,
+        }
+    }
+
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">build_failed</span>(
         <span class="ident">command</span>: <span class="kw">impl</span> <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="kw">impl</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>,
         <span class="ident">exit_code</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span>,
@@ -602,8 +819,11 @@
     <span class="doccomment">/// Returns the exit code for the process.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">process_exit_code</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">i32</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident"><span class="self">Self</span>::CargoMetadataFailed</span> =&gt; <span class="ident">NextestExitCode::CARGO_METADATA_FAILED</span>,
+            <span class="ident"><span class="self">Self</span>::CargoMetadataExecFailed</span> { .. } <span class="op">|</span> <span class="ident"><span class="self">Self</span>::CargoMetadataFailed</span> { .. } =&gt; {
+                <span class="ident">NextestExitCode::CARGO_METADATA_FAILED</span>
+            }
             <span class="ident"><span class="self">Self</span>::ProfileNotFound</span> { .. }
+            <span class="op">|</span> <span class="ident"><span class="self">Self</span>::StoreDirCreateError</span> { .. }
             <span class="op">|</span> <span class="ident"><span class="self">Self</span>::RootManifestNotFound</span> { .. }
             <span class="op">|</span> <span class="ident"><span class="self">Self</span>::CargoConfigsConstructError</span> { .. }
             <span class="op">|</span> <span class="ident"><span class="self">Self</span>::ConfigParseError</span> { .. }
@@ -613,13 +833,22 @@
             <span class="op">|</span> <span class="ident"><span class="self">Self</span>::PathMapperConstructError</span> { .. }
             <span class="op">|</span> <span class="ident"><span class="self">Self</span>::ArgumentJsonParseError</span> { .. }
             <span class="op">|</span> <span class="ident"><span class="self">Self</span>::CargoMetadataParseError</span> { .. }
-            <span class="op">|</span> <span class="ident"><span class="self">Self</span>::TestBinaryArgsParseError</span> { .. } =&gt; <span class="ident">NextestExitCode::SETUP_ERROR</span>,
+            <span class="op">|</span> <span class="ident"><span class="self">Self</span>::TestBinaryArgsParseError</span> { .. }
+            <span class="op">|</span> <span class="ident"><span class="self">Self</span>::DialoguerError</span> { .. }
+            <span class="op">|</span> <span class="ident"><span class="self">Self</span>::SignalHandlerSetupError</span> { .. } =&gt; <span class="ident">NextestExitCode::SETUP_ERROR</span>,
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;self-update&quot;</span>)]</span>
             <span class="ident"><span class="self">Self</span>::UpdateVersionParseError</span> { .. } =&gt; <span class="ident">NextestExitCode::SETUP_ERROR</span>,
-            <span class="ident"><span class="self">Self</span>::CreateTestListError</span> { .. } =&gt; <span class="ident">NextestExitCode::TEST_LIST_CREATION_FAILED</span>,
-            <span class="ident"><span class="self">Self</span>::BuildFailed</span> { .. } =&gt; <span class="ident">NextestExitCode::BUILD_FAILED</span>,
+            <span class="ident"><span class="self">Self</span>::FromMessagesError</span> { .. } <span class="op">|</span> <span class="ident"><span class="self">Self</span>::CreateTestListError</span> { .. } =&gt; {
+                <span class="ident">NextestExitCode::TEST_LIST_CREATION_FAILED</span>
+            }
+            <span class="ident"><span class="self">Self</span>::BuildExecFailed</span> { .. } <span class="op">|</span> <span class="ident"><span class="self">Self</span>::BuildFailed</span> { .. } =&gt; {
+                <span class="ident">NextestExitCode::BUILD_FAILED</span>
+            }
             <span class="ident"><span class="self">Self</span>::TestRunFailed</span> =&gt; <span class="ident">NextestExitCode::TEST_RUN_FAILED</span>,
             <span class="ident"><span class="self">Self</span>::ArchiveCreateError</span> { .. } =&gt; <span class="ident">NextestExitCode::ARCHIVE_CREATION_FAILED</span>,
+            <span class="ident"><span class="self">Self</span>::WriteTestListError</span> { .. } <span class="op">|</span> <span class="ident"><span class="self">Self</span>::WriteEventError</span> { .. } =&gt; {
+                <span class="ident">NextestExitCode::WRITE_OUTPUT_ERROR</span>
+            }
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;self-update&quot;</span>)]</span>
             <span class="ident"><span class="self">Self</span>::UpdateError</span> { .. } =&gt; <span class="ident">NextestExitCode::UPDATE_ERROR</span>,
             <span class="ident"><span class="self">Self</span>::ExperimentalFeatureNotEnabled</span> { .. } =&gt; {
@@ -632,7 +861,14 @@
     <span class="doccomment">/// Displays this error to stderr.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">display_to_stderr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">next_error</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span> {
-            <span class="ident"><span class="self">Self</span>::CargoMetadataFailed</span> =&gt; {
+            <span class="ident"><span class="self">Self</span>::CargoMetadataExecFailed</span> { <span class="ident">command</span>, <span class="ident">err</span> } =&gt; {
+                <span class="macro">log::error!</span>(
+                    <span class="string">&quot;failed to execute `{}`&quot;</span>,
+                    <span class="ident">command</span>.<span class="ident">if_supports_color</span>(<span class="ident">Stream::Stderr</span>, <span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">bold</span>())
+                );
+                <span class="prelude-val">Some</span>(<span class="ident">err</span> <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">Error</span>)
+            }
+            <span class="ident"><span class="self">Self</span>::CargoMetadataFailed</span> { .. } =&gt; {
                 <span class="comment">// The error produced by `cargo metadata` is enough.</span>
                 <span class="prelude-val">None</span>
             }
@@ -663,6 +899,13 @@
                     <span class="ident">path</span>.<span class="ident">if_supports_color</span>(<span class="ident">Stream::Stderr</span>, <span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">bold</span>())
                 );
                 <span class="prelude-val">None</span>
+            }
+            <span class="ident"><span class="self">Self</span>::StoreDirCreateError</span> { <span class="ident">store_dir</span>, <span class="ident">err</span> } =&gt; {
+                <span class="macro">log::error!</span>(
+                    <span class="string">&quot;failed to create store dir at `{}`&quot;</span>,
+                    <span class="ident">store_dir</span>.<span class="ident">if_supports_color</span>(<span class="ident">Stream::Stderr</span>, <span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">bold</span>())
+                );
+                <span class="prelude-val">Some</span>(<span class="ident">err</span> <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">Error</span>)
             }
             <span class="ident"><span class="self">Self</span>::CargoConfigsConstructError</span> { <span class="ident">err</span> } =&gt; {
                 <span class="macro">log::error!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">err</span>);
@@ -736,8 +979,19 @@
                 <span class="macro">log::error!</span>(<span class="string">&quot;error parsing Cargo metadata{}&quot;</span>, <span class="ident">metadata_source</span>);
                 <span class="prelude-val">Some</span>(<span class="ident">err</span> <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">Error</span>)
             }
+            <span class="ident"><span class="self">Self</span>::FromMessagesError</span> { <span class="ident">err</span> } =&gt; {
+                <span class="macro">log::error!</span>(<span class="string">&quot;failed to parse messages generated by Cargo&quot;</span>);
+                <span class="prelude-val">Some</span>(<span class="ident">err</span> <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">Error</span>)
+            }
             <span class="ident"><span class="self">Self</span>::CreateTestListError</span> { <span class="ident">err</span> } =&gt; {
                 <span class="macro">log::error!</span>(<span class="string">&quot;creating test list failed&quot;</span>);
+                <span class="prelude-val">Some</span>(<span class="ident">err</span> <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">Error</span>)
+            }
+            <span class="ident"><span class="self">Self</span>::BuildExecFailed</span> { <span class="ident">command</span>, <span class="ident">err</span> } =&gt; {
+                <span class="macro">log::error!</span>(
+                    <span class="string">&quot;failed to execute `{}`&quot;</span>,
+                    <span class="ident">command</span>.<span class="ident">if_supports_color</span>(<span class="ident">Stream::Stderr</span>, <span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">bold</span>())
+                );
                 <span class="prelude-val">Some</span>(<span class="ident">err</span> <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">Error</span>)
             }
             <span class="ident"><span class="self">Self</span>::BuildFailed</span> { <span class="ident">command</span>, <span class="ident">exit_code</span> } =&gt; {
@@ -759,6 +1013,14 @@
 
                 <span class="prelude-val">None</span>
             }
+            <span class="ident"><span class="self">Self</span>::WriteTestListError</span> { <span class="ident">err</span> } =&gt; {
+                <span class="macro">log::error!</span>(<span class="string">&quot;failed to write test list to output&quot;</span>);
+                <span class="prelude-val">Some</span>(<span class="ident">err</span> <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">Error</span>)
+            }
+            <span class="ident"><span class="self">Self</span>::WriteEventError</span> { <span class="ident">err</span> } =&gt; {
+                <span class="macro">log::error!</span>(<span class="string">&quot;failed to write event to output&quot;</span>);
+                <span class="prelude-val">Some</span>(<span class="ident">err</span> <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">Error</span>)
+            }
             <span class="ident"><span class="self">Self</span>::TestRunFailed</span> =&gt; {
                 <span class="macro">log::error!</span>(<span class="string">&quot;test run failed&quot;</span>);
                 <span class="prelude-val">None</span>
@@ -774,6 +1036,14 @@
                     <span class="string">&quot;failed to update nextest (please update manually by visiting &lt;{}&gt;)&quot;</span>,
                     <span class="string">&quot;https://get.nexte.st&quot;</span>.<span class="ident">if_supports_color</span>(<span class="ident">Stream::Stderr</span>, <span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">bold</span>())
                 );
+                <span class="prelude-val">Some</span>(<span class="ident">err</span> <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">Error</span>)
+            }
+            <span class="ident"><span class="self">Self</span>::DialoguerError</span> { <span class="ident">err</span> } =&gt; {
+                <span class="macro">log::error!</span>(<span class="string">&quot;error reading input prompt&quot;</span>);
+                <span class="prelude-val">Some</span>(<span class="ident">err</span> <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">Error</span>)
+            }
+            <span class="ident"><span class="self">Self</span>::SignalHandlerSetupError</span> { <span class="ident">err</span> } =&gt; {
+                <span class="macro">log::error!</span>(<span class="string">&quot;error setting up signal handler&quot;</span>);
                 <span class="prelude-val">Some</span>(<span class="ident">err</span> <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="kw">dyn</span> <span class="ident">Error</span>)
             }
             <span class="ident"><span class="self">Self</span>::ExperimentalFeatureNotEnabled</span> { <span class="ident">name</span>, <span class="ident">var_name</span> } =&gt; {
@@ -811,44 +1081,6 @@
         }
     }
 }
-
-<span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">ExpectedError</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) -&gt; <span class="ident">fmt::Result</span> {
-        <span class="comment">// This should generally not be called, but provide a stub implementation if it is</span>
-        <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident"><span class="self">Self</span>::CargoMetadataFailed</span> =&gt; <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;cargo metadata failed&quot;</span>),
-            <span class="ident"><span class="self">Self</span>::ProfileNotFound</span> { .. } =&gt; <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;profile not found&quot;</span>),
-            <span class="ident"><span class="self">Self</span>::RootManifestNotFound</span> { .. } =&gt; <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;root manifest not found&quot;</span>),
-            <span class="ident"><span class="self">Self</span>::CargoConfigsConstructError</span> { .. } =&gt; <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;CargoConfigs construct error&quot;</span>),
-            <span class="ident"><span class="self">Self</span>::ConfigParseError</span> { .. } =&gt; <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;config read error&quot;</span>),
-            <span class="ident"><span class="self">Self</span>::ArgumentFileReadError</span> { .. } =&gt; <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;argument file error&quot;</span>),
-            <span class="ident"><span class="self">Self</span>::UnknownArchiveFormat</span> { .. } =&gt; <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;unknown archive format&quot;</span>),
-            <span class="ident"><span class="self">Self</span>::ArchiveCreateError</span> { .. } =&gt; <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;archive create error&quot;</span>),
-            <span class="ident"><span class="self">Self</span>::ArchiveExtractError</span> { .. } =&gt; <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;archive extract error&quot;</span>),
-            <span class="ident"><span class="self">Self</span>::PathMapperConstructError</span> { .. } =&gt; <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;path mapper construct error&quot;</span>),
-            <span class="ident"><span class="self">Self</span>::ArgumentJsonParseError</span> { .. } =&gt; <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;argument json decode error&quot;</span>),
-            <span class="ident"><span class="self">Self</span>::CargoMetadataParseError</span> { .. } =&gt; <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;cargo metadata parse error&quot;</span>),
-            <span class="ident"><span class="self">Self</span>::CreateTestListError</span> { .. } =&gt; <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;parse test list error&quot;</span>),
-            <span class="ident"><span class="self">Self</span>::BuildFailed</span> { .. } =&gt; <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;build failed&quot;</span>),
-            <span class="ident"><span class="self">Self</span>::TestRunFailed</span> =&gt; <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;test run failed&quot;</span>),
-            <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;self-update&quot;</span>)]</span>
-            <span class="ident"><span class="self">Self</span>::UpdateVersionParseError</span> { .. } =&gt; <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;parsing update version failed&quot;</span>),
-            <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;self-update&quot;</span>)]</span>
-            <span class="ident"><span class="self">Self</span>::UpdateError</span> { .. } =&gt; <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;update failed&quot;</span>),
-            <span class="ident"><span class="self">Self</span>::ExperimentalFeatureNotEnabled</span> { .. } =&gt; {
-                <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;experimental feature not enabled&quot;</span>)
-            }
-            <span class="ident"><span class="self">Self</span>::FilterExpressionParseError</span> { .. } =&gt; {
-                <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;Failed to parse some filter expressions&quot;</span>)
-            }
-            <span class="ident"><span class="self">Self</span>::TestBinaryArgsParseError</span> { .. } =&gt; {
-                <span class="macro">writeln!</span>(<span class="ident">f</span>, <span class="string">&quot;test binary arguments parse error&quot;</span>)
-            }
-        }
-    }
-}
-
-<span class="kw">impl</span> <span class="ident">error::Error</span> <span class="kw">for</span> <span class="ident">ExpectedError</span> {}
 </code></pre></div>
 </section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="cargo_nextest" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.61.0 (fe5b13d68 2022-05-18)" ></div>
 </body></html>

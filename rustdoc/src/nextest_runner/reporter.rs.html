@@ -1304,6 +1304,7 @@
 <span id="1299">1299</span>
 <span id="1300">1300</span>
 <span id="1301">1301</span>
+<span id="1302">1302</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
@@ -1312,6 +1313,7 @@
 <span class="doccomment">//! The main structure in this module is [`TestReporter`].</span>
 
 <span class="kw">mod</span> <span class="ident">aggregator</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">aggregator::heuristic_extract_description</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">config::NextestProfile</span>,

@@ -1092,6 +1092,25 @@
 <span id="1087">1087</span>
 <span id="1088">1088</span>
 <span id="1089">1089</span>
+<span id="1090">1090</span>
+<span id="1091">1091</span>
+<span id="1092">1092</span>
+<span id="1093">1093</span>
+<span id="1094">1094</span>
+<span id="1095">1095</span>
+<span id="1096">1096</span>
+<span id="1097">1097</span>
+<span id="1098">1098</span>
+<span id="1099">1099</span>
+<span id="1100">1100</span>
+<span id="1101">1101</span>
+<span id="1102">1102</span>
+<span id="1103">1103</span>
+<span id="1104">1104</span>
+<span id="1105">1105</span>
+<span id="1106">1106</span>
+<span id="1107">1107</span>
+<span id="1108">1108</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
@@ -1544,16 +1563,21 @@
             <span class="kw">if</span> <span class="ident">output</span>.<span class="ident">status</span>.<span class="ident">success</span>() {
                 <span class="ident">ExecutionResult::Pass</span>
             } <span class="kw">else</span> {
-                <span class="comment">// On Unix, extract the signal if it&#39;s found.</span>
                 <span class="macro">cfg_if::cfg_if!</span> {
                     <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span> {
+                        <span class="comment">// On Unix, extract the signal if it&#39;s found.</span>
                         <span class="kw">use</span> <span class="ident">std::os::unix::process::ExitStatusExt</span>;
-                        <span class="kw">let</span> <span class="ident">signal</span> <span class="op">=</span> <span class="ident">output</span>.<span class="ident">status</span>.<span class="ident">signal</span>();
+                        <span class="kw">let</span> <span class="ident">abort_status</span> <span class="op">=</span> <span class="ident">output</span>.<span class="ident">status</span>.<span class="ident">signal</span>().<span class="ident">map</span>(<span class="ident">AbortStatus::UnixSignal</span>);
+                    } <span class="kw">else</span> <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">windows</span>)]</span> {
+                        <span class="kw">let</span> <span class="ident">abort_status</span> <span class="op">=</span> <span class="ident">output</span>.<span class="ident">status</span>.<span class="ident">code</span>().<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">code</span><span class="op">|</span> {
+                            <span class="kw">let</span> <span class="ident">exception</span> <span class="op">=</span> <span class="ident">windows::Win32::Foundation::NTSTATUS</span>(<span class="ident">code</span>);
+                            <span class="ident">exception</span>.<span class="ident">is_err</span>().<span class="ident">then</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">AbortStatus::WindowsNtStatus</span>(<span class="ident">exception</span>))
+                        });
                     } <span class="kw">else</span> {
-                        <span class="kw">let</span> <span class="ident">signal</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+                        <span class="kw">let</span> <span class="ident">abort_status</span> <span class="op">=</span> <span class="prelude-val">None</span>;
                     }
                 }
-                <span class="ident">ExecutionResult::Fail</span> { <span class="ident">signal</span> }
+                <span class="ident">ExecutionResult::Fail</span> { <span class="ident">abort_status</span> }
             }
         });
 
@@ -2012,8 +2036,8 @@
     <span class="ident">Pass</span>,
     <span class="doccomment">/// The test failed.</span>
     <span class="ident">Fail</span> {
-        <span class="doccomment">/// The signal the test failed with, if any. Only relevant on Unix.</span>
-        <span class="ident">signal</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span>,
+        <span class="doccomment">/// The abort status of the test, if any (for example, the signal on Unix).</span>
+        <span class="ident">abort_status</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">AbortStatus</span><span class="op">&gt;</span>,
     },
     <span class="doccomment">/// An error occurred while executing the test.</span>
     <span class="ident">ExecFail</span>,
@@ -2031,6 +2055,20 @@
             }
         }
     }
+}
+
+<span class="doccomment">/// A signal or other abort status for a test.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Returned as part of the [`ExecutionResult::Fail`] variant.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">AbortStatus</span> {
+    <span class="doccomment">/// The test was aborted due to a signal on Unix.</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
+    <span class="ident">UnixSignal</span>(<span class="ident">i32</span>),
+
+    <span class="doccomment">/// The test was determined to have aborted because the high bit was set on Windows.</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">windows</span>)]</span>
+    <span class="ident">WindowsNtStatus</span>(<span class="ident">windows::Win32::Foundation::NTSTATUS</span>),
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>

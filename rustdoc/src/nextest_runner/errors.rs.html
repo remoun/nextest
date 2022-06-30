@@ -931,8 +931,6 @@
 <span id="926">926</span>
 <span id="927">927</span>
 <span id="928">928</span>
-<span id="929">929</span>
-<span id="930">930</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
@@ -949,11 +947,7 @@
 <span class="kw">use</span> <span class="ident">camino</span>::{<span class="ident">FromPathBufError</span>, <span class="ident">Utf8Path</span>, <span class="ident">Utf8PathBuf</span>};
 <span class="kw">use</span> <span class="ident">config::ConfigError</span>;
 <span class="kw">use</span> <span class="ident">itertools</span>::{<span class="ident">Either</span>, <span class="ident">Itertools</span>};
-<span class="kw">use</span> <span class="ident">std</span>::{
-    <span class="ident">borrow::Cow</span>,
-    <span class="ident">env::JoinPathsError</span>,
-    <span class="ident">fmt</span>::{<span class="self">self</span>, <span class="ident">Write</span>},
-};
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">borrow::Cow</span>, <span class="ident">env::JoinPathsError</span>, <span class="ident">fmt</span>};
 <span class="kw">use</span> <span class="ident">thiserror::Error</span>;
 
 <span class="doccomment">/// An error that occurred while parsing the config.</span>
@@ -1792,6 +1786,8 @@
     }
 
     <span class="kw">fn</span> <span class="ident">known_versions</span>(<span class="ident">versions</span>: <span class="kw-2">&amp;</span>[(<span class="ident">Version</span>, <span class="ident">ReleaseStatus</span>)]) -&gt; <span class="ident">String</span> {
+        <span class="kw">use</span> <span class="ident">std::fmt::Write</span>;
+
         <span class="comment">// Take the first few versions here.</span>
         <span class="kw">const</span> <span class="ident">DISPLAY_COUNT</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">4</span>;
 

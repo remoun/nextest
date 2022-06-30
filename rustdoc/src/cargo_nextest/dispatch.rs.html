@@ -1486,7 +1486,7 @@
 <span class="kw">use</span> <span class="ident">nextest_metadata</span>::{<span class="ident">BinaryListSummary</span>, <span class="ident">BuildPlatform</span>};
 <span class="kw">use</span> <span class="ident">nextest_runner</span>::{
     <span class="ident">cargo_config</span>::{<span class="ident">CargoConfigs</span>, <span class="ident">TargetTriple</span>},
-    <span class="ident">config</span>::{<span class="ident">NextestConfig</span>, <span class="ident">NextestProfile</span>},
+    <span class="ident">config</span>::{<span class="ident">NextestConfig</span>, <span class="ident">NextestProfile</span>, <span class="ident">TestThreads</span>},
     <span class="ident">errors::WriteTestListError</span>,
     <span class="ident">list</span>::{<span class="ident">BinaryList</span>, <span class="ident">OutputFormat</span>, <span class="ident">RustTestArtifact</span>, <span class="ident">SerializableFormat</span>, <span class="ident">TestList</span>},
     <span class="ident">partition::PartitionerBuilder</span>,
@@ -2013,7 +2013,7 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Default</span>, <span class="ident">Args</span>)]</span>
 <span class="attribute">#[<span class="ident">clap</span>(<span class="ident">next_help_heading</span> <span class="op">=</span> <span class="string">&quot;RUNNER OPTIONS&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TestRunnerOpts</span> {
-    <span class="doccomment">/// Number of tests to run simultaneously [default: logical CPU count]</span>
+    <span class="doccomment">/// Number of tests to run simultaneously [possible values: integer or &quot;num-cpus&quot;]</span>
     <span class="attribute">#[<span class="ident">clap</span>(
         <span class="ident">long</span>,
         <span class="ident">short</span> <span class="op">=</span> <span class="string">&#39;j&#39;</span>,
@@ -2022,7 +2022,7 @@
         <span class="ident">conflicts_with</span> <span class="op">=</span> <span class="string">&quot;no-capture&quot;</span>,
         <span class="ident">env</span> <span class="op">=</span> <span class="string">&quot;NEXTEST_TEST_THREADS&quot;</span>
     )]</span>
-    <span class="ident">test_threads</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
+    <span class="ident">test_threads</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">TestThreads</span><span class="op">&gt;</span>,
 
     <span class="doccomment">/// Number of retries for failing tests [default: from profile]</span>
     <span class="attribute">#[<span class="ident">clap</span>(<span class="ident">long</span>)]</span>

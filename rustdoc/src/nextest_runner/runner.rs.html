@@ -1111,6 +1111,11 @@
 <span id="1106">1106</span>
 <span id="1107">1107</span>
 <span id="1108">1108</span>
+<span id="1109">1109</span>
+<span id="1110">1110</span>
+<span id="1111">1111</span>
+<span id="1112">1112</span>
+<span id="1113">1113</span>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) The nextest Contributors</span>
 <span class="comment">// SPDX-License-Identifier: MIT OR Apache-2.0</span>
 
@@ -1119,7 +1124,7 @@
 <span class="doccomment">//! The main structure in this module is [`TestRunner`].</span>
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
-    <span class="ident">config::NextestProfile</span>,
+    <span class="ident">config</span>::{<span class="ident">NextestProfile</span>, <span class="ident">TestThreads</span>},
     <span class="ident">list</span>::{<span class="ident">TestInstance</span>, <span class="ident">TestList</span>},
     <span class="ident">reporter</span>::{<span class="ident">CancelReason</span>, <span class="ident">FinalStatusLevel</span>, <span class="ident">StatusLevel</span>, <span class="ident">TestEvent</span>},
     <span class="ident">signal</span>::{<span class="ident">SignalEvent</span>, <span class="ident">SignalHandler</span>},
@@ -1146,7 +1151,7 @@
     <span class="ident">no_capture</span>: <span class="ident">bool</span>,
     <span class="ident">retries</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
     <span class="ident">fail_fast</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>,
-    <span class="ident">test_threads</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
+    <span class="ident">test_threads</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">TestThreads</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">TestRunnerBuilder</span> {
@@ -1171,7 +1176,7 @@
     }
 
     <span class="doccomment">/// Sets the number of tests to run simultaneously.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_test_threads</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">test_threads</span>: <span class="ident">usize</span>) -&gt; <span class="kw-2">&amp;mut</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_test_threads</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">test_threads</span>: <span class="ident">TestThreads</span>) -&gt; <span class="kw-2">&amp;mut</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">test_threads</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">test_threads</span>);
         <span class="self">self</span>
     }
@@ -1186,7 +1191,10 @@
     ) -&gt; <span class="ident">TestRunner</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">test_threads</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">no_capture</span> {
             <span class="bool-val">true</span> =&gt; <span class="number">1</span>,
-            <span class="bool-val">false</span> =&gt; <span class="self">self</span>.<span class="ident">test_threads</span>.<span class="ident">unwrap_or_else</span>(<span class="ident">num_cpus::get</span>),
+            <span class="bool-val">false</span> =&gt; <span class="self">self</span>
+                .<span class="ident">test_threads</span>
+                .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">profile</span>.<span class="ident">test_threads</span>())
+                .<span class="ident">compute</span>(),
         };
         <span class="kw">let</span> <span class="ident">retries</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">retries</span>.<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">profile</span>.<span class="ident">retries</span>());
         <span class="kw">let</span> <span class="ident">fail_fast</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">fail_fast</span>.<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">profile</span>.<span class="ident">fail_fast</span>());
@@ -2080,7 +2088,9 @@
     <span class="kw">fn</span> <span class="ident">no_capture_settings</span>() {
         <span class="comment">// Ensure that output settings are ignored with no-capture.</span>
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">builder</span> <span class="op">=</span> <span class="ident">TestRunnerBuilder::default</span>();
-        <span class="ident">builder</span>.<span class="ident">set_no_capture</span>(<span class="bool-val">true</span>).<span class="ident">set_test_threads</span>(<span class="number">20</span>);
+        <span class="ident">builder</span>
+            .<span class="ident">set_no_capture</span>(<span class="bool-val">true</span>)
+            .<span class="ident">set_test_threads</span>(<span class="ident">TestThreads::Count</span>(<span class="number">20</span>));
         <span class="kw">let</span> <span class="ident">test_list</span> <span class="op">=</span> <span class="ident">TestList::empty</span>();
         <span class="kw">let</span> <span class="ident">config</span> <span class="op">=</span> <span class="ident">NextestConfig::default_config</span>(<span class="string">&quot;/fake/dir&quot;</span>);
         <span class="kw">let</span> <span class="ident">profile</span> <span class="op">=</span> <span class="ident">config</span>.<span class="ident">profile</span>(<span class="ident">NextestConfig::DEFAULT_PROFILE</span>).<span class="ident">unwrap</span>();

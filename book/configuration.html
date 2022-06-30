@@ -189,6 +189,10 @@ dir = &quot;target/nextest&quot;
 # non-flaky. Can be overridden through the `--retries` option.
 retries = 0
 
+# The number of threads to run tests with. Supported values are either an integer or
+# the string &quot;num-cpus&quot;. Can be overridden through the `--test-threads` option.
+test-threads = &quot;num-cpus&quot;
+
 # Show these test statuses in the output.
 #
 # The possible values this can take are:

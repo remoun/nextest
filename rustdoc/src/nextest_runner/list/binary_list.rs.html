@@ -519,7 +519,7 @@
     <span class="ident">RustTestBinaryKind</span>, <span class="ident">RustTestBinarySummary</span>,
 };
 <span class="kw">use</span> <span class="ident">owo_colors::OwoColorize</span>;
-<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">io</span>, <span class="ident">io::Write</span>};
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">fmt::Write</span> <span class="kw">as</span> <span class="kw">_</span>, <span class="ident">io</span>, <span class="ident">io::Write</span>};
 
 <span class="doccomment">/// A Rust test binary built by Cargo.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
@@ -748,7 +748,7 @@
                     <span class="comment">// 3. For all other target kinds, use a combination of the target kind and</span>
                     <span class="comment">//      the target name. For the same reason as above, these will always be</span>
                     <span class="comment">//      unique.</span>
-                    <span class="ident">id</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;::{}/{}&quot;</span>, <span class="ident">computed_kind</span>, <span class="ident">name</span>));
+                    <span class="macro">write!</span>(<span class="ident">id</span>, <span class="string">&quot;::{computed_kind}/{name}&quot;</span>).<span class="ident">unwrap</span>();
                 }
 
                 <span class="self">self</span>.<span class="ident">rust_binaries</span>.<span class="ident">push</span>(<span class="ident">RustTestBinary</span> {
